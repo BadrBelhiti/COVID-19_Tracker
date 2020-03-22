@@ -21,15 +21,30 @@ public class LocationEntry implements Comparable<LocationEntry> {
     @Override
     public int compareTo(LocationEntry o) {
         // Avoiding using (int) Long.compare(...) for compatibility reasons
-
         long diff = this.timestamp - o.timestamp;
         if (diff > 0){
             return 1;
         } else if (diff < 0){
             return -1;
         }
-
         return 0;
+    }
+
+    public LocationEntry add(LocationEntry locationEntry){
+        return new LocationEntry(this.latitude + locationEntry.latitude, this.longitude + locationEntry.longitude, -1);
+    }
+
+    public LocationEntry subtract(LocationEntry locationEntry){
+        return new LocationEntry(this.latitude - locationEntry.latitude, this.longitude - locationEntry.longitude, -1);
+    }
+
+    // Using Euclidean geometry is fine as we'll be dealing with small distances.
+    public double distanceSquared(LocationEntry locationEntry){
+        return Math.pow(this.latitude - locationEntry.latitude, 2) + Math.pow(this.longitude - locationEntry.longitude, 2);
+    }
+
+    public double distance(LocationEntry locationEntry){
+        return Math.sqrt(distanceSquared(locationEntry));
     }
 
     public double getLatitude() {
@@ -42,5 +57,14 @@ public class LocationEntry implements Comparable<LocationEntry> {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationEntry{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", timestamp=" + timestamp +
+                '}';
     }
 }
