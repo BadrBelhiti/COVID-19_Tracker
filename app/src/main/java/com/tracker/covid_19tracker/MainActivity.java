@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.tracker.covid_19tracker.files.FileManager;
 import com.tracker.covid_19tracker.gui.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
 
@@ -20,25 +21,25 @@ public class MainActivity extends AppCompatActivity {
 
     // Permission request codes
     private static final int LOCATIONS_REQUEST_CODE = 0;
+    private static final int FILE_REQUEST_CODE = 1;
 
     private LocationTracker locationTracker;
     private VisualTracker visualTracker;
+    private FileManager fileManager;
     private boolean[] permissions = new boolean[10];
+    private boolean initialized = false;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        requestPermissions();
 
-        // Will be true if permission is automatically granted (i.e. user not prompted).
-        if (permissions[LOCATIONS_REQUEST_CODE]) {
-            this.visualTracker = findViewById(R.id.visual_tracker);
-            enableTracking();
-        }
+        this.fileManager = new FileManager(this);
+        this.initialized = true;
 
-        Log.d("Debugging", (visualTracker == null) + "");
+        initializePermissions();
 
 
         Log.d("Debugging", "Starting app");
@@ -46,14 +47,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void requestPermissions(){
-        // Does app have authorization from user?
+    private void initializePermissions(){
+        requestPermissions();
+
+        // Will be true if permission is automatically granted (i.e. user not prompted).
+        if (permissions[LOCATIONS_REQUEST_CODE]) {
+            enableTracking();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void requestPermissions(){
+        // Does app have authorization from user to use location services?
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Permissions not granted by default. Prompt user.
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATIONS_REQUEST_CODE);
         } else {
             // Permissions already granted beforehand.
             handleLocationPermissions(new int[]{PackageManager.PERMISSION_GRANTED});
+        }
+
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, FILE_REQUEST_CODE);
+        } else {
+            handleFilePermissions(new int[]{PackageManager.PERMISSION_GRANTED});
         }
     }
 
@@ -63,30 +80,61 @@ public class MainActivity extends AppCompatActivity {
             case LOCATIONS_REQUEST_CODE:
                 handleLocationPermissions(grantResults);
                 break;
+            case FILE_REQUEST_CODE:
+                handleFilePermissions(grantResults);
+                break;
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("Debugging", "Paused");
+    }
 
     private void handleLocationPermissions(int[] grantResults){
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             // App is ready to begin tracking location
             Log.d("Debugging", "Location service access granted");
             permissions[LOCATIONS_REQUEST_CODE] = true;
-            if (visualTracker != null){
+            if (initialized){
                 enableTracking();
             }
         } else {
-            // TODO: Close app
             Log.d("Debugging", "Location service access denied");
+            exit();
+        }
+    }
+
+    private void handleFilePermissions(int[] grantResults){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            permissions[FILE_REQUEST_CODE] = true;
+        } else {
+            Log.d("File IO", "File IO access denied");
+            exit();
         }
     }
 
     private void enableTracking(){
+        this.visualTracker = findViewById(R.id.visual_tracker);
         this.locationTracker = new LocationTracker(this);
+    }
+
+    public void exit(){
+        if (ANDROID_VERSION >= 21){
+            finishAndRemoveTask();
+        } else if (ANDROID_VERSION >= 16){
+            finishAffinity();
+        } else {
+            System.exit(0);
+        }
     }
 
     public VisualTracker getVisualTracker() {
         return visualTracker;
+    }
+
+    public FileManager getFileManager() {
+        return fileManager;
     }
 }

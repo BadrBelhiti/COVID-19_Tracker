@@ -36,7 +36,6 @@ public class VisualTracker extends View {
         for (Point point : track){
             canvas.drawPoint(point.x, point.y, paint);
         }
-        Log.d("Debugging", "Draw");
     }
 
     @Override
@@ -49,8 +48,6 @@ public class VisualTracker extends View {
     }
 
     public void moveCursor(double deltaX, double deltaY){
-        Log.d("Debugging", deltaX + ":" + deltaY);
-
         Point last = null;
         if (!track.isEmpty()){
             last = track.peek();
