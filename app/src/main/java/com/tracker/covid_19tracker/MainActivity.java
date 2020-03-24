@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.tracker.covid_19tracker.client.Client;
 import com.tracker.covid_19tracker.files.FileManager;
 import com.tracker.covid_19tracker.gui.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationTracker locationTracker;
     private VisualTracker visualTracker;
     private FileManager fileManager;
+    private Client client;
     private boolean[] permissions = new boolean[10];
     private boolean initialized = false;
 
@@ -39,14 +41,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        new File(getFilesDir(), "track_data.json").delete();
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
 
         this.fileManager = new FileManager(this);
+        this.client = new Client(this);
         this.initialized = true;
 
         initializePermissions();
-
+        client.start();
 
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
@@ -73,13 +75,6 @@ public class MainActivity extends AppCompatActivity {
             handleLocationPermissions(new int[]{PackageManager.PERMISSION_GRANTED});
         }
 
-        /*
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, FILE_REQUEST_CODE);
-        } else {
-            handleFilePermissions(new int[]{PackageManager.PERMISSION_GRANTED});
-        }
-         */
     }
 
     @Override
@@ -127,6 +122,13 @@ public class MainActivity extends AppCompatActivity {
     private void enableTracking(){
         this.visualTracker = findViewById(R.id.visual_tracker);
         this.locationTracker = new LocationTracker(this);
+    }
+
+    public void exit(String errMsg){
+        if (errMsg != null){
+            Log.e("Fatal Error", errMsg);
+        }
+        exit();
     }
 
     public void exit(){
