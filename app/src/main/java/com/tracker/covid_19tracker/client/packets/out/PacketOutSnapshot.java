@@ -8,10 +8,12 @@ import com.tracker.covid_19tracker.location.LocationEntry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 public class PacketOutSnapshot extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected PacketOutSnapshot(LocationEntry locationEntry, long first, long last) {
+    protected PacketOutSnapshot(UUID uuid, LocationEntry locationEntry, long first, long last) {
         super(0);
 
         JSONObject payload = new JSONObject();
@@ -25,6 +27,6 @@ public class PacketOutSnapshot extends PacketOut {
             Log.e("Client Error", "Error building PacketOutSnapshot");
         }
 
-        packData(payload);
+        packData(payload, uuid);
     }
 }

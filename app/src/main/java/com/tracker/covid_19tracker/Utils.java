@@ -1,5 +1,8 @@
 package com.tracker.covid_19tracker;
 
+import android.os.Build;
+import android.util.Log;
+import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
 import org.json.JSONArray;
@@ -9,34 +12,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.TreeSet;
 
 public class Utils {
-
-    public static byte[] getBytes(File file){
-        FileInputStream fileInputStream;
-        byte[] bytes = new byte[(int) file.length()];
-        try {
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            fileInputStream.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-
-        return bytes;
-    }
-
-    public static byte[] getBytes(FileInputStream fileInputStream, int size){
-        byte[] bytes = new byte[size];
-        try {
-            fileInputStream.read(bytes);
-            fileInputStream.close();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        return bytes;
-    }
 
     // Takes in JSON string
     public static Track getTrack(String data) throws JSONException {
@@ -88,6 +68,23 @@ public class Utils {
         }
 
         return jsonArray;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static String fromStream(InputStream inputStream){
+        int size;
+        byte[] bytes;
+
+        try {
+            size = inputStream.available();
+            bytes = new byte[size];
+            Log.d("File IO", String.format("Read %d bytes of track data", inputStream.read(bytes)));
+        } catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
 }

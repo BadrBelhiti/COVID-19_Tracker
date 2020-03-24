@@ -132,7 +132,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void exit(){
-        Log.d("Debugging", "Successfully closed network connections? " + client.stop());
+        if (client != null){
+            Log.d("Debugging", "Successfully closed network connections? " + client.stop());
+        }
         if (ANDROID_VERSION >= 21){
             finishAndRemoveTask();
         } else if (ANDROID_VERSION >= 16){

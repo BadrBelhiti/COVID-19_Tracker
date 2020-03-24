@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public abstract class PacketOut {
 
@@ -19,18 +20,20 @@ public abstract class PacketOut {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected void packData(JSONObject payload){
+    protected void packData(JSONObject payload, UUID uuid){
         this.payload = payload;
 
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", id);
+            jsonObject.put("uuid", uuid.toString());
             jsonObject.put("data", payload);
             this.data = jsonObject.toString().getBytes(StandardCharsets.UTF_8);
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building packet");
         }
+
     }
 
     public int size(){
