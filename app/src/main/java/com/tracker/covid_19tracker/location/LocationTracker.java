@@ -13,7 +13,7 @@ import com.tracker.covid_19tracker.gui.VisualTracker;
 
 public class LocationTracker implements LocationListener {
 
-    private static final int MIN_TIME_MILLIS = 1000 * 1;
+    private static final int MIN_TIME_MILLIS = 1000 * 5;
     private static final int MIN_DISTANCE_METERS = 1;
     private static final double MIN_VEHICLE_SPEED_MPS = 5;
     private static final double SCALE = 2e5;
@@ -52,7 +52,7 @@ public class LocationTracker implements LocationListener {
 
             LocationEntry diff;
             if (lastEntry == null){
-                diff = new LocationEntry(0, 0, -1);
+                diff = new LocationEntry(0, 0, 0, -1);
             } else {
                 diff = locationEntry.subtract(lastEntry);
             }

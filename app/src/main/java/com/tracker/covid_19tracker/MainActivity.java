@@ -15,6 +15,9 @@ import com.tracker.covid_19tracker.files.FileManager;
 import com.tracker.covid_19tracker.gui.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
 
+import java.io.File;
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int ANDROID_VERSION = Build.VERSION.SDK_INT;
@@ -35,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        new File(getFilesDir(), "track_data.json").delete();
+        Log.d("Debugging", Arrays.toString(getFilesDir().list()));
 
         this.fileManager = new FileManager(this);
         this.initialized = true;
@@ -67,11 +73,13 @@ public class MainActivity extends AppCompatActivity {
             handleLocationPermissions(new int[]{PackageManager.PERMISSION_GRANTED});
         }
 
+        /*
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, FILE_REQUEST_CODE);
         } else {
             handleFilePermissions(new int[]{PackageManager.PERMISSION_GRANTED});
         }
+         */
     }
 
     @Override
@@ -90,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d("Debugging", "Paused");
+        fileManager.saveAll();
     }
 
     private void handleLocationPermissions(int[] grantResults){

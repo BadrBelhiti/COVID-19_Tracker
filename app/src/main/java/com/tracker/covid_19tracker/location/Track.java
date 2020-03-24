@@ -45,4 +45,10 @@ public class Track {
         return Math.min(a, b) < 0 ? null : list.get(a);
     }
 
+    @Override
+    public String toString() {
+        return "Track{" +
+                "track=" + track +
+                '}';
+    }
 }
