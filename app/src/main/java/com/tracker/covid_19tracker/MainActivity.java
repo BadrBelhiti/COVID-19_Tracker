@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
             // Permissions already granted beforehand.
             handleLocationPermissions(new int[]{PackageManager.PERMISSION_GRANTED});
         }
-
     }
 
     @Override
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d("Debugging", "Paused");
+        Log.d("Debugging", "Successfully closed network connections? " + client.stop());
         fileManager.saveAll();
     }
 
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void exit(){
+        Log.d("Debugging", "Successfully closed network connections? " + client.stop());
         if (ANDROID_VERSION >= 21){
             finishAndRemoveTask();
         } else if (ANDROID_VERSION >= 16){
