@@ -31,17 +31,12 @@ public class Utils {
 
         for (int i = 0; i < length; i++){
             JSONArray location = (JSONArray) locations.get(i);
-            long timestamp = location.getLong(0);
-            double latitude = location.getDouble(1);
-            double longitude = location.getDouble(2);
-            double altitude = location.getDouble(3);
-
-            LocationEntry locationEntry = new LocationEntry(latitude, longitude, altitude, timestamp);
-            track.addPoint(locationEntry);
+            track.addPoint(arrayToEntry(location));
         }
 
         return track;
     }
+
 
     public static JSONArray entryToArray(LocationEntry locationEntry){
         JSONArray jsonArray = new JSONArray();
@@ -56,6 +51,19 @@ public class Utils {
         }
 
         return jsonArray;
+    }
+
+    public static LocationEntry arrayToEntry(String data) throws JSONException {
+        return arrayToEntry(new JSONArray(data));
+    }
+
+    public static LocationEntry arrayToEntry(JSONArray jsonArray) throws JSONException{
+        long timestamp = jsonArray.getLong(0);
+        double latitude = jsonArray.getDouble(1);
+        double longitude = jsonArray.getDouble(2);
+        double altitude = jsonArray.getDouble(3);
+
+        return new LocationEntry(latitude, longitude, altitude, timestamp);
     }
 
     public static JSONArray trackToArray(Track track){

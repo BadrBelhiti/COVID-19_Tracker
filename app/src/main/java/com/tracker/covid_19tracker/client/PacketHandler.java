@@ -1,7 +1,9 @@
 package com.tracker.covid_19tracker.client;
 
+import android.util.Log;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.client.packets.in.PacketInInfection;
+import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +30,15 @@ public class PacketHandler {
 
         if (id == 2){
             PacketInInfection packetInInfection = new PacketInInfection(payload.toString());
-            Track track = packetInInfection.getTrack();
-            // TODO: Run calculations and alert user if needed
+            Track infectionTrack = packetInInfection.getTrack();
+            Track myTack = mainActivity.getFileManager().getTrackDataFile().getTrack();
+            LocationEntry contact = myTack.getLastContact(infectionTrack);
+
+            if (contact == null){
+                Log.d("Debugging", "No paths crossed with infected user!");
+            } else {
+                Log.d("Debugging", "Uh oh... " + contact.toString());
+            }
         }
 
     }

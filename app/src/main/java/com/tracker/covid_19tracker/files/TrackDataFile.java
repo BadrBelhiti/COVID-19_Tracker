@@ -83,4 +83,8 @@ public class TrackDataFile extends AbstractFile {
 
         return true;
     }
+
+    public Track getTrack() {
+        return track;
+    }
 }
