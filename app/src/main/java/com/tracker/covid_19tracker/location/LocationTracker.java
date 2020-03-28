@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.files.TrackDataFile;
-import com.tracker.covid_19tracker.gui.VisualTracker;
+import com.tracker.covid_19tracker.ui.views.VisualTracker;
 
 public class LocationTracker implements LocationListener {
 

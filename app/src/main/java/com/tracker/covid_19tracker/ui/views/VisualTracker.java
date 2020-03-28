@@ -1,9 +1,8 @@
-package com.tracker.covid_19tracker.gui;
+package com.tracker.covid_19tracker.ui.views;
 
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Stack;

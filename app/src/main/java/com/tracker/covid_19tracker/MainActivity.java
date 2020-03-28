@@ -4,16 +4,18 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import com.tracker.covid_19tracker.client.Client;
 import com.tracker.covid_19tracker.files.FileManager;
-import com.tracker.covid_19tracker.gui.VisualTracker;
+import com.tracker.covid_19tracker.ui.views.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
 
-import java.io.File;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,10 +47,24 @@ public class MainActivity extends AppCompatActivity {
         this.initialized = true;
 
         initializePermissions();
+        testListView();
         client.start();
 
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
+    }
+
+    private void testListView(){
+        String[] arr = new String[20];
+
+        for (int i = 1; i <= arr.length; i++){
+            arr[i - 1] = i + "";
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.infection, arr);
+
+        ListView listView = findViewById(R.id.list);
+        listView.setAdapter(arrayAdapter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
