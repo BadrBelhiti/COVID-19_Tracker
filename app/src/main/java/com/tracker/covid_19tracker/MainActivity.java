@@ -4,19 +4,26 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tracker.covid_19tracker.client.Client;
+import com.tracker.covid_19tracker.client.packets.out.PacketOut;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
 import com.tracker.covid_19tracker.files.FileManager;
-import com.tracker.covid_19tracker.ui.views.VisualTracker;
+import com.tracker.covid_19tracker.location.Track;
+import com.tracker.covid_19tracker.ui.fragments.ContactsFragment;
+import com.tracker.covid_19tracker.ui.fragments.ReportFragment;
+import com.tracker.covid_19tracker.ui.fragments.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationTracker locationTracker;
     private VisualTracker visualTracker;
     private FileManager fileManager;
+    private BottomNavigationView bottomNavigationView;
     private Client client;
     private boolean[] permissions = new boolean[10];
     private boolean initialized = false;
@@ -39,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        this.bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
 
@@ -47,24 +56,51 @@ public class MainActivity extends AppCompatActivity {
         this.initialized = true;
 
         initializePermissions();
-        testListView();
+        initNavBar();
         client.start();
+
+        PacketOut packet = new PacketOutInfection(UUID.randomUUID(), new Track());
+        client.send(packet);
 
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
     }
 
-    private void testListView(){
-        String[] arr = new String[20];
+    private void initNavBar(){
+        BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.navigation_report:
+                        reportPage();
+                        return true;
+                    case R.id.navigation_cases:
+                        casesPage();
+                        return true;
+                    case R.id.navigation_contacts:
+                        contactsPage();
+                        return true;
+                }
+                return false;
+            }
+        };
+        bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+    }
 
-        for (int i = 1; i <= arr.length; i++){
-            arr[i - 1] = i + "";
-        }
+    private void casesPage(){
+        Log.d("Debugging", "Local Cases");
+    }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.infection, arr);
+    private void reportPage(){
+        Log.d("Debugging", "Self Report");
+        ReportFragment reportFragment = ReportFragment.newInstance(this);
+        openFragment(reportFragment);
+    }
 
-        ListView listView = findViewById(R.id.list);
-        listView.setAdapter(arrayAdapter);
+    private void contactsPage(){
+        Log.d("Debugging", "Prior Contacts");
+        ContactsFragment contactsFragment = ContactsFragment.newInstance(this);
+        openFragment(contactsFragment);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -130,6 +166,13 @@ public class MainActivity extends AppCompatActivity {
             Log.d("File IO", "File IO access denied");
             exit();
         }
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     private void enableTracking(){

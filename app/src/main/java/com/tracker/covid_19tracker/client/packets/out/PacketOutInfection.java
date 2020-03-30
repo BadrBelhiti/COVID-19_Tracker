@@ -13,13 +13,13 @@ import java.util.UUID;
 public class PacketOutInfection extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected PacketOutInfection(UUID uuid, Track track) {
+    public PacketOutInfection(UUID uuid, Track track) {
         super(1);
 
         JSONObject payload = new JSONObject();
 
         try {
-            payload.put("data", Utils.trackToArray(track));
+            payload.put("track", Utils.trackToArray(track));
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building PacketOutInfection");

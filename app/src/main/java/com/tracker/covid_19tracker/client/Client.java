@@ -20,8 +20,8 @@ import java.util.Queue;
 
 public class Client implements Runnable {
 
-    private static final String HOST = "google.com";
-    private static final int PORT = 80;
+    private static final String HOST = "159.65.228.221";
+    private static final int PORT = 8080;
     private static final int TIMEOUT = 5 * 1000;
 
     private MainActivity mainActivity;
@@ -31,7 +31,7 @@ public class Client implements Runnable {
     private Socket socket;
     private BufferedReader bufferedReader;
     private OutputStream outputStream;
-    private Queue<PacketOut> outgoing;
+    private volatile Queue<PacketOut> outgoing;
     private volatile boolean listening;
 
     public Client(MainActivity mainActivity){
@@ -70,8 +70,11 @@ public class Client implements Runnable {
             if (!outgoing.isEmpty()){
                 PacketOut packet = outgoing.poll();
                 if (packet != null) {
+                    Log.d("Debugging", packet.toString());
                     try {
+                        Log.d("Debugging", "Sending packet: " + new String(packet.getData()));
                         outputStream.write(packet.getData());
+                        outputStream.flush();
                     } catch (IOException e) {
                         e.printStackTrace();
                         Log.e("Client Error", "Error sending packet");

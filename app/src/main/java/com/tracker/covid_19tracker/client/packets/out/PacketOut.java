@@ -3,10 +3,12 @@ package com.tracker.covid_19tracker.client.packets.out;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
+import com.tracker.covid_19tracker.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class PacketOut {
@@ -28,7 +30,9 @@ public abstract class PacketOut {
             jsonObject.put("id", id);
             jsonObject.put("uuid", uuid.toString());
             jsonObject.put("data", payload);
-            this.data = jsonObject.toString().getBytes(StandardCharsets.UTF_8);
+            String packet = jsonObject.toString();
+            this.data = (Utils.zeroPad(packet.length() + "", 8) + packet).getBytes(StandardCharsets.UTF_8);
+            Log.d("Debugging", new String(data));
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building packet");
@@ -42,5 +46,10 @@ public abstract class PacketOut {
 
     public byte[] getData() {
         return data;
+    }
+
+    @Override
+    public String toString() {
+        return new String(data);
     }
 }

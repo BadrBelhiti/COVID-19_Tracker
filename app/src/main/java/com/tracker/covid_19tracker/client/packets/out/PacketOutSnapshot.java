@@ -13,7 +13,7 @@ import java.util.UUID;
 public class PacketOutSnapshot extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected PacketOutSnapshot(UUID uuid, LocationEntry locationEntry, long first, long last) {
+    public PacketOutSnapshot(UUID uuid, LocationEntry locationEntry, long first, long last) {
         super(0);
 
         JSONObject payload = new JSONObject();

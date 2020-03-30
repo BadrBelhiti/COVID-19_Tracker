@@ -1,4 +1,4 @@
-package com.tracker.covid_19tracker.ui.views;
+package com.tracker.covid_19tracker.ui.fragments;
 
 import android.content.Context;
 import android.graphics.*;
