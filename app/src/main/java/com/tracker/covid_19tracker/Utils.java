@@ -95,4 +95,12 @@ public class Utils {
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
+    public static String zeroPad(String str, int length){
+        StringBuilder sb = new StringBuilder(str);
+        while (sb.length() < length){
+            sb.insert(0, "0");
+        }
+        return sb.toString();
+    }
+
 }
