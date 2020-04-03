@@ -16,19 +16,12 @@ public class PacketHandler {
         this.mainActivity = mainActivity;
     }
 
-
-    /*
-    0: Client -> Server (location snapshot)
-    1: Client -> Server (infection)
-    2: Server -> Client (infection)
-     */
-
     public void handlePacket(String raw) throws JSONException {
         JSONObject data = new JSONObject(raw);
         int id = data.getInt("id");
         JSONObject payload = data.getJSONObject("data");
 
-        if (id == 2){
+        if (id == 3){
             PacketInInfection packetInInfection = new PacketInInfection(payload.toString());
             Track infectionTrack = packetInInfection.getTrack();
             Track myTack = mainActivity.getFileManager().getTrackDataFile().getTrack();

@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.R;
 
-
-public class ReportFragment extends Fragment {
+public class LocalCasesFragment extends Fragment {
 
     private MainActivity mainActivity;
     private View root;
@@ -28,13 +27,13 @@ public class ReportFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return this.root = inflater.inflate(R.layout.report_fragment, container, false);
+        return this.root = inflater.inflate(R.layout.cases_fragment, container, false);
     }
 
-    public static ReportFragment newInstance(MainActivity mainActivity) {
-        ReportFragment fragment = new ReportFragment();
+    public static LocalCasesFragment newInstance(MainActivity mainActivity) {
+        LocalCasesFragment fragment = new LocalCasesFragment();
         fragment.mainActivity = mainActivity;
         return fragment;
     }
-    
+
 }

@@ -14,7 +14,7 @@ public class PacketOutInfection extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public PacketOutInfection(UUID uuid, Track track) {
-        super(1);
+        super(2, uuid);
 
         JSONObject payload = new JSONObject();
 
@@ -25,6 +25,6 @@ public class PacketOutInfection extends PacketOut {
             Log.e("Client Error", "Error building PacketOutInfection");
         }
 
-        packData(payload, uuid);
+        packData(payload);
     }
 }

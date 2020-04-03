@@ -15,9 +15,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tracker.covid_19tracker.client.Client;
 import com.tracker.covid_19tracker.client.packets.out.PacketOut;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
 import com.tracker.covid_19tracker.files.FileManager;
 import com.tracker.covid_19tracker.location.Track;
 import com.tracker.covid_19tracker.ui.fragments.ContactsFragment;
+import com.tracker.covid_19tracker.ui.fragments.LocalCasesFragment;
 import com.tracker.covid_19tracker.ui.fragments.ReportFragment;
 import com.tracker.covid_19tracker.ui.fragments.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private VisualTracker visualTracker;
     private FileManager fileManager;
     private BottomNavigationView bottomNavigationView;
+    private ReportFragment reportFragment;
+    private ContactsFragment contactsFragment;
+    private LocalCasesFragment localCasesFragment;
     private Client client;
     private boolean[] permissions = new boolean[10];
     private boolean initialized = false;
@@ -57,16 +62,23 @@ public class MainActivity extends AppCompatActivity {
 
         initializePermissions();
         initNavBar();
-        client.start();
+        // client.start();
 
-        PacketOut packet = new PacketOutInfection(UUID.randomUUID(), new Track());
+        PacketOut packet = new PacketOutLogin(UUID.randomUUID());
         client.send(packet);
 
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
+
+        reportPage();
     }
 
     private void initNavBar(){
+        this.reportFragment = ReportFragment.newInstance(this);
+        this.contactsFragment = ContactsFragment.newInstance(this);
+        this.localCasesFragment = LocalCasesFragment.newInstance(this);
+
+
         BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -89,17 +101,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void casesPage(){
         Log.d("Debugging", "Local Cases");
+        openFragment(localCasesFragment);
     }
 
     private void reportPage(){
         Log.d("Debugging", "Self Report");
-        ReportFragment reportFragment = ReportFragment.newInstance(this);
         openFragment(reportFragment);
     }
 
     private void contactsPage(){
         Log.d("Debugging", "Prior Contacts");
-        ContactsFragment contactsFragment = ContactsFragment.newInstance(this);
         openFragment(contactsFragment);
     }
 
