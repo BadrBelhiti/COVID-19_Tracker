@@ -5,6 +5,7 @@ import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.client.packets.in.PacketInInfection;
 import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
+import com.tracker.covid_19tracker.ui.Infection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +22,8 @@ public class PacketHandler {
         int id = data.getInt("id");
         JSONObject payload = data.getJSONObject("data");
 
+        Log.d("Debugging", id + "");
+
         if (id == 3){
             PacketInInfection packetInInfection = new PacketInInfection(payload.toString());
             Track infectionTrack = packetInInfection.getTrack();
@@ -31,6 +34,7 @@ public class PacketHandler {
                 Log.d("Debugging", "No paths crossed with infected user!");
             } else {
                 Log.d("Debugging", "Uh oh... " + contact.toString());
+                mainActivity.getContactsFragment().addInfection(new Infection(contact));
             }
         }
 

@@ -1,6 +1,9 @@
 package com.tracker.covid_19tracker;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -9,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -17,7 +22,9 @@ import com.tracker.covid_19tracker.client.packets.out.PacketOut;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
 import com.tracker.covid_19tracker.files.FileManager;
+import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
+import com.tracker.covid_19tracker.ui.Infection;
 import com.tracker.covid_19tracker.ui.fragments.ContactsFragment;
 import com.tracker.covid_19tracker.ui.fragments.LocalCasesFragment;
 import com.tracker.covid_19tracker.ui.fragments.ReportFragment;
@@ -30,6 +37,8 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private static final int ANDROID_VERSION = Build.VERSION.SDK_INT;
+    private static final String NOTIFICATIONS_NAME = "RIST Notifications";
+    private static final String NOTIFICATIONS_DESC = "RIST notifications to alert user of new report of symptoms";
 
     // Permission request codes
     private static final int LOCATIONS_REQUEST_CODE = 0;
@@ -63,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         initializePermissions();
         initNavBar();
         // client.start();
+        createNotificationChannel();
 
         PacketOut packet = new PacketOutLogin(UUID.randomUUID());
         client.send(packet);
@@ -70,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
 
-        reportPage();
+        filterIntent();
     }
 
     private void initNavBar(){
@@ -112,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     private void contactsPage(){
         Log.d("Debugging", "Prior Contacts");
         openFragment(contactsFragment);
+        contactsFragment.addInfection(new Infection(new LocationEntry(0, 0, 0, 0)));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -179,6 +190,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATIONS_NAME, NOTIFICATIONS_NAME, importance);
+            channel.setDescription(NOTIFICATIONS_DESC);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+            if (notificationManager == null){
+                Log.e("Notifications", "Error creating notification channel.");
+                return;
+            }
+
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public void showNotification(NotificationCompat.Builder builder, int id){
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(id, builder.build());
+    }
+
+    public void filterIntent(){
+        String fragment = getIntent().getStringExtra("fragment");
+
+        if (fragment != null){
+            if (fragment.equals("contacts")){
+                openFragment(contactsFragment);
+            }
+        } else {
+            reportPage();
+        }
+    }
+
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
@@ -217,5 +261,21 @@ public class MainActivity extends AppCompatActivity {
 
     public FileManager getFileManager() {
         return fileManager;
+    }
+
+    public ReportFragment getReportFragment() {
+        return reportFragment;
+    }
+
+    public ContactsFragment getContactsFragment() {
+        return contactsFragment;
+    }
+
+    public LocalCasesFragment getLocalCasesFragment() {
+        return localCasesFragment;
+    }
+
+    public static String getNotificationsName() {
+        return NOTIFICATIONS_NAME;
     }
 }

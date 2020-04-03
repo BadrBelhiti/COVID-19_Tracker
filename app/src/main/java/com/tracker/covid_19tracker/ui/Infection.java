@@ -7,9 +7,13 @@ public class Infection {
     private LocationEntry contact;
     private boolean isActive;
 
-    public Infection(LocationEntry contact){
+    public Infection(LocationEntry contact, boolean isActive){
         this.contact = contact;
-        this.isActive = true;
+        this.isActive = isActive;
+    }
+
+    public Infection(LocationEntry contact){
+        this(contact, true);
     }
 
     public LocationEntry getContact() {

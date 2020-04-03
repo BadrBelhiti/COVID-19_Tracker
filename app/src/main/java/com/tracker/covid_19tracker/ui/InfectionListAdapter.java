@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import com.tracker.covid_19tracker.R;
 
 import java.text.DateFormat;
@@ -44,7 +45,7 @@ public class InfectionListAdapter extends ArrayAdapter<Infection> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View entry = convertView;
         LayoutInflater inflater = context.getLayoutInflater();
 
