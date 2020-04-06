@@ -45,6 +45,10 @@ public class Track {
         return Math.min(a, b) < 0 ? null : list.get(a);
     }
 
+    public TreeSet<LocationEntry> getSet() {
+        return track;
+    }
+
     @Override
     public String toString() {
         return "Track{" +

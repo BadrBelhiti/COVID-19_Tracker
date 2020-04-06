@@ -3,6 +3,7 @@ package com.tracker.covid_19tracker.files;
 import android.app.Activity;
 import android.util.Log;
 import com.tracker.covid_19tracker.MainActivity;
+import org.json.JSONObject;
 
 import java.io.*;
 
@@ -13,6 +14,7 @@ public abstract class AbstractFile {
     protected File file;
     protected FileInputStream inputStream;
     protected FileOutputStream outputStream;
+    protected JSONObject data;
 
     protected MainActivity mainActivity;
     protected FileManager fileManager;
@@ -23,6 +25,7 @@ public abstract class AbstractFile {
         this.file = new File(dir, name);
         this.mainActivity = fileManager.getMainActivity();
         this.fileManager = fileManager;
+        this.data = new JSONObject();
 
         if (file.getParentFile() != null && !file.getParentFile().exists()){
             if (!file.getParentFile().mkdirs()){
@@ -54,6 +57,17 @@ public abstract class AbstractFile {
 
     public abstract boolean load();
 
-    public abstract boolean save();
+    public boolean save() {
+        try {
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.append(data.toString());
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
 }
