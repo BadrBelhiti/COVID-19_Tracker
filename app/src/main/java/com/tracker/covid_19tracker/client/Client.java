@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Client implements Runnable {
+public abstract class Client implements Runnable {
 
     private static final String HOST = "159.65.228.221";
     private static final int PORT = 8080;
@@ -33,6 +33,7 @@ public class Client implements Runnable {
     private OutputStream outputStream;
     private volatile Queue<PacketOut> outgoing;
     private volatile boolean listening;
+    private boolean connected = false;
 
     public Client(MainActivity mainActivity){
         this.mainActivity = mainActivity;
@@ -43,7 +44,7 @@ public class Client implements Runnable {
         this.listening = true;
     }
 
-    public synchronized void start(){
+    public synchronized void connect(){
         connectionThread.start();
     }
 
@@ -57,14 +58,15 @@ public class Client implements Runnable {
             socket.connect(new InetSocketAddress(HOST, PORT), TIMEOUT);
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             this.outputStream = socket.getOutputStream();
+            this.connected = true;
             Log.d("Debugging", "Successfully connected");
         } catch (IOException e) {
-            e.printStackTrace();
-            closeOnError("Failed to connect to server.");
-            return;
+            this.connected = false;
         }
 
-        while (listening){
+        onConnectionAttempt(connected);
+
+        while (listening && connected){
 
             // Send any pending packets
             if (!outgoing.isEmpty()){
@@ -106,7 +108,12 @@ public class Client implements Runnable {
                 Log.e("Client Error", "Error parsing packet");
             }
         }
+
+        this.connected = false;
+        stop();
     }
+
+    public abstract void onConnectionAttempt(boolean connected);
 
     public void send(PacketOut packetOut){
         outgoing.add(packetOut);
@@ -123,12 +130,6 @@ public class Client implements Runnable {
 
     public synchronized boolean stop(){
         this.listening = false;
-        try {
-            connectionThread.join();
-        } catch (InterruptedException e){
-            e.printStackTrace();
-            return false;
-        }
 
         try {
             if (socket != null) {
@@ -147,6 +148,17 @@ public class Client implements Runnable {
             return false;
         }
 
+        try {
+            connectionThread.join();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }

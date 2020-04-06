@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,18 +62,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
 
         this.fileManager = new FileManager(this);
-        this.client = new Client(this);
+        this.client = new Client(this){
+            @Override
+            public void onConnectionAttempt(boolean connected) {
+                Log.d("Debugging", "Current status: " + (connected ? "Online" : "Offline"));
+            }
+        };
         this.initialized = true;
 
         initializePermissions();
         initNavBar();
-        // client.start();
+        client.connect();
         createNotificationChannel();
 
         PacketOut packet = new PacketOutLogin(UUID.randomUUID());

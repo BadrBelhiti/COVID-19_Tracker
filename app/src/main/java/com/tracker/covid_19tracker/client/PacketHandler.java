@@ -27,8 +27,10 @@ public class PacketHandler {
         if (id == 3){
             PacketInInfection packetInInfection = new PacketInInfection(payload.toString());
             Track infectionTrack = packetInInfection.getTrack();
-            Track myTack = mainActivity.getFileManager().getTrackDataFile().getTrack();
-            LocationEntry contact = myTack.getLastContact(infectionTrack);
+            Track myTrack = mainActivity.getFileManager().getTrackDataFile().getTrack();
+            myTrack.addPoint(new LocationEntry(0, 0, 0, 0));
+
+            LocationEntry contact = myTrack.getLastContact(infectionTrack);
 
             if (contact == null){
                 Log.d("Debugging", "No paths crossed with infected user!");
