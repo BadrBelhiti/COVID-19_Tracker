@@ -20,6 +20,7 @@ import com.tracker.covid_19tracker.ui.Infection;
 import com.tracker.covid_19tracker.ui.InfectionListAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ContactsFragment extends Fragment {
@@ -50,6 +51,7 @@ public class ContactsFragment extends Fragment {
 
     public void addInfection(Infection infection){
         infectionsList.add(infection);
+        mainActivity.getFileManager().getReportsDataFile().add(infection);
 
         Intent intent = new Intent(mainActivity, MainActivity.class);
         intent.putExtra("fragment", "contacts");

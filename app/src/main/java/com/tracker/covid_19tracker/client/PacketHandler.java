@@ -17,10 +17,20 @@ public class PacketHandler {
         this.mainActivity = mainActivity;
     }
 
-    public void handlePacket(String raw) throws JSONException {
-        JSONObject data = new JSONObject(raw);
-        int id = data.getInt("id");
-        JSONObject payload = data.getJSONObject("data");
+    public void handlePacket(String raw) {
+        JSONObject data = null;
+        int id = 0;
+        JSONObject payload = null;
+
+        try {
+            data = new JSONObject(raw);
+            id = data.getInt("id");
+            payload = data.getJSONObject("data");
+        } catch (JSONException e){
+            e.printStackTrace();
+            Log.e("Client Error", "Error parsing packet");
+            return;
+        }
 
         Log.d("Debugging", id + "");
 

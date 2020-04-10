@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
+import com.tracker.covid_19tracker.ui.Infection;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,32 @@ public class Utils {
         return track;
     }
 
+    public static Infection getReport(JSONObject report){
+        LocationEntry locationEntry = null;
+        boolean isActive = false;
+
+        try {
+            locationEntry = arrayToEntry(report.getJSONArray("location"));
+            isActive = report.getBoolean("active");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return new Infection(locationEntry, isActive);
+    }
+
+    public static JSONObject reportToObject(Infection infection){
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("location", entryToArray(infection.getContact()));
+            jsonObject.put("active", infection.isActive());
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
 
     public static JSONArray entryToArray(LocationEntry locationEntry){
         JSONArray jsonArray = new JSONArray();
