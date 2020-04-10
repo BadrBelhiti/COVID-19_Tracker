@@ -7,21 +7,27 @@ import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.MainActivity;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FileManager {
 
     private final File MASTER_DIR;
 
     private MainActivity mainActivity;
+    private Set<AbstractFile> files;
     private TrackDataFile trackDataFile;
     private SessionDataFile sessionDataFile;
+    private ReportsDataFile reportsDataFile;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public FileManager(MainActivity mainActivity){
         this.mainActivity = mainActivity;
         this.MASTER_DIR = mainActivity.getFilesDir();
+        this.files = new HashSet<>();
         this.trackDataFile = new TrackDataFile(MASTER_DIR, this);
         this.sessionDataFile = new SessionDataFile(MASTER_DIR, this);
+        this.reportsDataFile = new ReportsDataFile(MASTER_DIR, this);
 
         if (!trackDataFile.load()){
             mainActivity.exit("Failed to load track data from local storage. Closing...");
@@ -30,14 +36,24 @@ public class FileManager {
         if (!sessionDataFile.load()){
             mainActivity.exit("Failed to load session data from local storage. Closing...");
         }
+
+        if (!reportsDataFile.load()){
+            mainActivity.exit("Failed to load reports data from local storage. Closing...");
+        }
     }
 
     public void saveAll(){
-        if (!trackDataFile.save()){
-            Log.e("File IO", "Error saving track data");
-        } else {
-            Log.d("File IO", "Successfully saved all files");
+        for (AbstractFile file : files){
+            if (!file.save()){
+                Log.e("File IO", String.format("Error saving file %s", file.getName()));
+            } else {
+                Log.e("File IO", String.format("Successfully saved file %s", file.getName()));
+            }
         }
+    }
+
+    public void registerFile(AbstractFile file){
+        files.add(file);
     }
 
     public File getMASTER_DIR() {
@@ -54,5 +70,9 @@ public class FileManager {
 
     public SessionDataFile getSessionDataFile() {
         return sessionDataFile;
+    }
+
+    public ReportsDataFile getReportsDataFile() {
+        return reportsDataFile;
     }
 }

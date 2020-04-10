@@ -33,6 +33,7 @@ import com.tracker.covid_19tracker.ui.fragments.ReportFragment;
 import com.tracker.covid_19tracker.ui.fragments.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -68,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
-
         this.fileManager = new FileManager(this);
         this.client = new Client(this){
             @Override
@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     private void contactsPage(){
         Log.d("Debugging", "Prior Contacts");
         openFragment(contactsFragment);
-        contactsFragment.addInfection(new Infection(new LocationEntry(0, 0, 0, 0)));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

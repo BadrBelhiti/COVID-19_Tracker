@@ -26,6 +26,7 @@ public abstract class AbstractFile {
         this.mainActivity = fileManager.getMainActivity();
         this.fileManager = fileManager;
         this.data = new JSONObject();
+        fileManager.registerFile(this);
 
         if (file.getParentFile() != null && !file.getParentFile().exists()){
             if (!file.getParentFile().mkdirs()){
@@ -70,4 +71,7 @@ public abstract class AbstractFile {
         return true;
     }
 
+    public String getName() {
+        return name;
+    }
 }

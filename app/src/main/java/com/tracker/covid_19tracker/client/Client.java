@@ -101,12 +101,8 @@ public abstract class Client implements Runnable {
 
             Log.d("Debugging", msg);
 
-            try {
-                packetHandler.handlePacket(msg);
-            } catch (JSONException e){
-                e.printStackTrace();
-                Log.e("Client Error", "Error parsing packet");
-            }
+            final String finalMsg = msg;
+            handler.post(() -> packetHandler.handlePacket(finalMsg));
         }
 
         this.connected = false;

@@ -23,4 +23,12 @@ public class Infection {
     public boolean isActive() {
         return isActive;
     }
+
+    @Override
+    public String toString() {
+        return "Infection{" +
+                "contact=" + contact +
+                ", isActive=" + isActive +
+                '}';
+    }
 }
