@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.MainActivity;
+import com.tracker.covid_19tracker.R;
 import com.tracker.covid_19tracker.client.packets.out.PacketOut;
 import org.json.JSONException;
 
@@ -20,9 +21,10 @@ import java.util.Queue;
 
 public abstract class Client implements Runnable {
 
-    private static final String HOST = "159.65.228.221";
-    private static final int PORT = 8080;
     private static final int TIMEOUT = 5 * 1000;
+
+    private final String HOST;
+    private final int PORT;
 
     private MainActivity mainActivity;
     private Thread connectionThread;
@@ -42,6 +44,9 @@ public abstract class Client implements Runnable {
         this.handler = new Handler(mainActivity.getMainLooper());
         this.outgoing = new LinkedList<>();
         this.listening = true;
+
+        this.HOST = mainActivity.getString(R.string.ip_address);
+        this.PORT = Integer.parseInt(mainActivity.getString(R.string.port));
     }
 
     public synchronized void connect(){
@@ -106,7 +111,7 @@ public abstract class Client implements Runnable {
         }
 
         this.connected = false;
-        stop();
+        shutdown();
     }
 
     public abstract void onConnectionAttempt(boolean connected);
@@ -124,9 +129,11 @@ public abstract class Client implements Runnable {
         });
     }
 
-    public synchronized boolean stop(){
+    public synchronized void stop(){
         this.listening = false;
+    }
 
+    public void shutdown(){
         try {
             if (socket != null) {
                 socket.close();
@@ -141,17 +148,13 @@ public abstract class Client implements Runnable {
             }
         } catch (IOException e){
             e.printStackTrace();
-            return false;
         }
 
         try {
             connectionThread.join();
         } catch (InterruptedException e){
             e.printStackTrace();
-            return false;
         }
-
-        return true;
     }
 
     public boolean isConnected() {
