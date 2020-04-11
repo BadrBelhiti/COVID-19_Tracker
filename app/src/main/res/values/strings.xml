@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">R.I.S.T</string>
-    <string name="report_button">Report Symptoms</string>
-    <string name="coming_soon">Coming Soon…</string>
-    <string name="ip_address">159.65.228.221</string>
-    <string name="port">8080</string>
-</resources>
-
