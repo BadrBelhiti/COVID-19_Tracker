@@ -41,14 +41,17 @@ public class ReportsDataFile extends AbstractFile {
         save();
     }
 
-    public void add(Infection infection){
+    public void add(Infection infection, boolean init){
         infections.add(infection);
+        mainActivity.getContactsFragment().addInfection(infection);
 
-        try {
-            ((JSONArray) data.get("reports")).put(Utils.reportToObject(infection));
-            Log.d("Debugging", "##" + data.get("reports"));
-        } catch (JSONException e){
-            e.printStackTrace();
+        if (!init) {
+            try {
+                ((JSONArray) data.get("reports")).put(Utils.reportToObject(infection));
+                Log.d("Debugging", "##" + data.get("reports"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         Log.d("Debugging", "--->" + infections.toString());
@@ -73,7 +76,7 @@ public class ReportsDataFile extends AbstractFile {
 
             for (int i = 0; i < size; i++){
                 Infection infection = Utils.getReport((JSONObject) reports.get(i));
-                mainActivity.getContactsFragment().addInfection(infection);
+                add(infection, true);
             }
 
         } catch (JSONException e) {

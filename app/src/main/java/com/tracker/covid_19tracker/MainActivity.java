@@ -67,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
+        initNavBar();
 
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
+        // new File(getFilesDir(), "reports.json").delete();
         this.fileManager = new FileManager(this);
         this.client = new Client(this){
             @Override
@@ -79,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         this.initialized = true;
 
         initializePermissions();
-        initNavBar();
         client.connect();
         createNotificationChannel();
 
@@ -171,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d("Debugging", "Paused");
-        Log.d("Debugging", "Successfully closed network connections? " + client.stop());
         fileManager.saveAll();
     }
 
@@ -243,6 +243,13 @@ public class MainActivity extends AppCompatActivity {
         this.locationTracker = new LocationTracker(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        client.stop();
+        Log.d("Debugging", "Successfully closed network connections? " + "No idea");
+    }
+
     public void exit(String errMsg){
         if (errMsg != null){
             Log.e("Fatal Error", errMsg);
@@ -252,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void exit(){
         if (client != null){
-            Log.d("Debugging", "Successfully closed network connections? " + client.stop());
+            client.stop();
+            Log.d("Debugging", "Successfully closed network connections? " + "No idea");
         }
         if (ANDROID_VERSION >= 21){
             finishAndRemoveTask();

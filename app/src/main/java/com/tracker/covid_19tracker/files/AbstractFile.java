@@ -43,6 +43,7 @@ public abstract class AbstractFile {
                 e.printStackTrace();
                 Log.e("File IO", String.format("Failed to create directory for file: %s. Closing...", name));
                 mainActivity.exit();
+                return;
             }
         }
 
@@ -62,6 +63,7 @@ public abstract class AbstractFile {
         try {
             FileWriter fileWriter = new FileWriter(file);
             fileWriter.append(data.toString());
+            Log.d("Debugging", "!!!" + data.toString());
             fileWriter.flush();
             fileWriter.close();
         } catch (IOException e){

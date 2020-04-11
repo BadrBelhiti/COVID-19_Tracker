@@ -18,9 +18,9 @@ public class PacketHandler {
     }
 
     public void handlePacket(String raw) {
-        JSONObject data = null;
-        int id = 0;
-        JSONObject payload = null;
+        JSONObject data;
+        int id;
+        JSONObject payload;
 
         try {
             data = new JSONObject(raw);
@@ -46,7 +46,7 @@ public class PacketHandler {
                 Log.d("Debugging", "No paths crossed with infected user!");
             } else {
                 Log.d("Debugging", "Uh oh... " + contact.toString());
-                mainActivity.getContactsFragment().addInfection(new Infection(contact));
+                mainActivity.getFileManager().getReportsDataFile().add(new Infection(contact, true), false);
             }
         }
 

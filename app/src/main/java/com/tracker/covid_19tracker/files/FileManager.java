@@ -43,11 +43,12 @@ public class FileManager {
     }
 
     public void saveAll(){
+        Log.d("Debugging", "%" + files.toString());
         for (AbstractFile file : files){
             if (!file.save()){
                 Log.e("File IO", String.format("Error saving file %s", file.getName()));
             } else {
-                Log.e("File IO", String.format("Successfully saved file %s", file.getName()));
+                Log.d("File IO", String.format("Successfully saved file %s", file.getName()));
             }
         }
     }
