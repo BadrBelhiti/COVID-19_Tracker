@@ -9,7 +9,6 @@ import com.tracker.covid_19tracker.R;
 import com.tracker.covid_19tracker.client.packets.out.PacketOut;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
 import com.tracker.covid_19tracker.files.CachedPacketsFile;
-import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.UUID;
 
 public abstract class Client implements Runnable {
 
@@ -76,7 +74,7 @@ public abstract class Client implements Runnable {
 
                 if (!connected) {
                     try {
-                        Thread.sleep(5 * 1000);
+                        Thread.sleep(5 * 60 * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -121,6 +119,7 @@ public abstract class Client implements Runnable {
                 Log.d("Debugging", msg);
 
                 final String finalMsg = msg;
+                Log.d("Debugging", "Received packet: " + msg);
                 handler.post(() -> packetHandler.handlePacket(finalMsg));
             }
         }
@@ -180,6 +179,8 @@ public abstract class Client implements Runnable {
     }
 
     public void shutdown(){
+        boolean successful = true;
+
         try {
             if (socket != null) {
                 socket.close();
@@ -194,14 +195,21 @@ public abstract class Client implements Runnable {
             }
         } catch (IOException e){
             e.printStackTrace();
+            successful = false;
         }
 
         try {
             connectionThread.join();
         } catch (InterruptedException e){
             e.printStackTrace();
+            successful = false;
         }
+
+        boolean finalSuccessful = successful;
+        handler.post(() -> onShutdown(finalSuccessful));
     }
+
+    public abstract void onShutdown(boolean successful);
 
     public boolean isConnected() {
         return connected;

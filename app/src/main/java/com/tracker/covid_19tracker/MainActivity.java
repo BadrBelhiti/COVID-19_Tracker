@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private ContactsFragment contactsFragment;
     private LocalCasesFragment localCasesFragment;
     private Client client;
-    private boolean[] permissions = new boolean[10];
+    private boolean[] permissions = new boolean[2];
     private boolean initialized = false;
 
 
@@ -69,15 +69,20 @@ public class MainActivity extends AppCompatActivity {
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
         initNavBar();
 
-        Log.d("Debugging", Arrays.toString(getFilesDir().list()));
-        new File(getFilesDir(), "track_data.json").delete();
         this.fileManager = new FileManager(this);
+
         this.client = new Client(this){
             @Override
             public void onConnectionAttempt(boolean connected) {
                 Log.d("Debugging", "Current status: " + (connected ? "Online" : "Offline"));
             }
+
+            @Override
+            public void onShutdown(boolean successful) {
+                Log.d("Debugging", "Successfully closed network connections? " + successful);
+            }
         };
+
         this.initialized = true;
 
         initializePermissions();
@@ -244,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         client.stop();
-        Log.d("Debugging", "Successfully closed network connections? " + "No idea");
     }
 
     public void exit(String errMsg){
@@ -257,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
     public void exit(){
         if (client != null){
             client.stop();
-            Log.d("Debugging", "Successfully closed network connections? " + "No idea");
         }
         if (ANDROID_VERSION >= 21){
             finishAndRemoveTask();

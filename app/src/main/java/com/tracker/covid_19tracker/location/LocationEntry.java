@@ -24,14 +24,7 @@ public class LocationEntry implements Comparable<LocationEntry> {
 
     @Override
     public int compareTo(LocationEntry o) {
-        // Avoiding using (int) Long.compare(...) for compatibility reasons
-        long diff = this.timestamp - o.timestamp;
-        if (diff > 0){
-            return 1;
-        } else if (diff < 0){
-            return -1;
-        }
-        return 0;
+        return Long.compare(timestamp, o.timestamp);
     }
 
     public LocationEntry add(LocationEntry locationEntry){

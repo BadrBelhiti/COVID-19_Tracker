@@ -1,11 +1,12 @@
 package com.tracker.covid_19tracker.client;
 
+import android.os.Build;
 import android.util.Log;
+import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.MainActivity;
-import com.tracker.covid_19tracker.client.packets.in.PacketInInfection;
-import com.tracker.covid_19tracker.location.LocationEntry;
-import com.tracker.covid_19tracker.location.Track;
-import com.tracker.covid_19tracker.ui.Infection;
+import com.tracker.covid_19tracker.client.packets.Packet;
+import com.tracker.covid_19tracker.client.packets.Packets;
+import com.tracker.covid_19tracker.client.packets.in.PacketIn;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +18,7 @@ public class PacketHandler {
         this.mainActivity = mainActivity;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void handlePacket(String raw) {
         JSONObject data;
         int id;
@@ -34,22 +36,14 @@ public class PacketHandler {
 
         Log.d("Debugging", id + "");
 
-        if (id == 3){
-            PacketInInfection packetInInfection = new PacketInInfection(payload.toString());
-            Track infectionTrack = packetInInfection.getTrack();
-            Track myTrack = mainActivity.getFileManager().getTrackDataFile().getTrack();
-            myTrack.addPoint(new LocationEntry(0, 0, 0, 0));
-
-            LocationEntry contact = myTrack.getLastContact(infectionTrack);
-
-            if (contact == null){
-                Log.d("Debugging", "No paths crossed with infected user!");
-            } else {
-                Log.d("Debugging", "Uh oh... " + contact.toString());
-                mainActivity.getFileManager().getReportsDataFile().add(new Infection(contact, true), false);
-            }
+        Packet packet = Packets.getPacket(id, payload.toString());
+        if (!(packet instanceof PacketIn)){
+            Log.d("Debugging", "Received bad packet");
+            return;
         }
 
+        PacketIn packetIn = (PacketIn) packet;
+        packetIn.handle(mainActivity);
     }
 
 }

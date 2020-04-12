@@ -10,8 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -25,9 +23,12 @@ public class Utils {
     }
 
     public static Track getTrack(JSONObject data) throws JSONException {
+        return getTrack(data.getJSONArray("location_entries"));
+    }
+
+    public static Track getTrack(JSONArray locations) throws JSONException {
         Track track = new Track();
 
-        JSONArray locations = data.getJSONArray("location_entries");
         int length = locations.length();
 
         for (int i = 0; i < length; i++){

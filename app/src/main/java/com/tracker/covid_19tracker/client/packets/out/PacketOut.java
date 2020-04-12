@@ -4,13 +4,14 @@ import android.os.Build;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.Utils;
+import com.tracker.covid_19tracker.client.packets.Packet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-public class PacketOut {
+public class PacketOut extends Packet {
 
     protected JSONObject payload;
     private UUID uuid;
@@ -18,6 +19,7 @@ public class PacketOut {
     protected byte[] data;
 
     public PacketOut(byte[] data){
+        super(new String(data));
         this.data = data;
     }
 
@@ -26,6 +28,7 @@ public class PacketOut {
     }
 
     public PacketOut(JSONObject data){
+        super(data);
         try {
             this.payload = data.getJSONObject("data");
             this.uuid = UUID.fromString(data.getString("uuid"));
@@ -36,6 +39,7 @@ public class PacketOut {
     }
 
     protected PacketOut(int id, UUID uuid){
+        super(new JSONObject());
         this.id = id;
         this.uuid = uuid;
     }
