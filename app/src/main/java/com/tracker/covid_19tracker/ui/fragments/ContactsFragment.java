@@ -67,22 +67,6 @@ public class ContactsFragment extends Fragment {
         mainActivity.showNotification(builder, (int) (infection.getContact().getTimestamp() % Integer.MAX_VALUE));
     }
 
-    private void initList(){
-        Random random = new Random();
-        ArrayList<Infection> infections = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++){
-            LocationEntry locationEntry = new LocationEntry(0, 0, 0, random.nextLong());
-            Infection infection = new Infection(locationEntry);
-            infections.add(infection);
-        }
-
-        InfectionListAdapter adapter = new InfectionListAdapter(mainActivity, infections);
-
-        ListView listView = root.findViewById(R.id.list);
-        listView.setAdapter(adapter);
-    }
-
     public static ContactsFragment newInstance(MainActivity mainActivity) {
         ContactsFragment fragment = new ContactsFragment();
         fragment.mainActivity = mainActivity;

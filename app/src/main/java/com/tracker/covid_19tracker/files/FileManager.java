@@ -19,6 +19,7 @@ public class FileManager {
     private TrackDataFile trackDataFile;
     private SessionDataFile sessionDataFile;
     private ReportsDataFile reportsDataFile;
+    private CachedPacketsFile cachedPacketsFile;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public FileManager(MainActivity mainActivity){
@@ -28,6 +29,7 @@ public class FileManager {
         this.trackDataFile = new TrackDataFile(MASTER_DIR, this);
         this.sessionDataFile = new SessionDataFile(MASTER_DIR, this);
         this.reportsDataFile = new ReportsDataFile(MASTER_DIR, this);
+        this.cachedPacketsFile = new CachedPacketsFile(MASTER_DIR, this);
 
         if (!trackDataFile.load()){
             mainActivity.exit("Failed to load track data from local storage. Closing...");
@@ -40,10 +42,13 @@ public class FileManager {
         if (!reportsDataFile.load()){
             mainActivity.exit("Failed to load reports data from local storage. Closing...");
         }
+
+        if (!cachedPacketsFile.load()){
+            mainActivity.exit("Failed to load packet data from local storage. Closing...");
+        }
     }
 
     public void saveAll(){
-        Log.d("Debugging", "%" + files.toString());
         for (AbstractFile file : files){
             if (!file.save()){
                 Log.e("File IO", String.format("Error saving file %s", file.getName()));
@@ -75,5 +80,9 @@ public class FileManager {
 
     public ReportsDataFile getReportsDataFile() {
         return reportsDataFile;
+    }
+
+    public CachedPacketsFile getCachedPacketsFile() {
+        return cachedPacketsFile;
     }
 }

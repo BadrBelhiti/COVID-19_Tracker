@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         initNavBar();
 
         Log.d("Debugging", Arrays.toString(getFilesDir().list()));
-        // new File(getFilesDir(), "reports.json").delete();
+        new File(getFilesDir(), "track_data.json").delete();
         this.fileManager = new FileManager(this);
         this.client = new Client(this){
             @Override
@@ -83,9 +83,6 @@ public class MainActivity extends AppCompatActivity {
         initializePermissions();
         client.connect();
         createNotificationChannel();
-
-        PacketOut packet = new PacketOutLogin(UUID.randomUUID());
-        client.send(packet);
 
         Log.d("Debugging", "Starting app");
         Log.d("Debugging", ANDROID_VERSION + "");
@@ -269,6 +266,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             System.exit(0);
         }
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public VisualTracker getVisualTracker() {
