@@ -11,17 +11,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.R;
-import com.tracker.covid_19tracker.client.packets.out.PacketOut;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutBetter;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
+import com.tracker.covid_19tracker.files.ReportsDataFile;
 import com.tracker.covid_19tracker.files.SessionDataFile;
+import com.tracker.covid_19tracker.files.TrackDataFile;
 
 
 public class ReportFragment extends Fragment {
 
+    private static final int MAX_INCUBATION = 14 * 24 * 60 * 60 * 1000;
+
     private MainActivity mainActivity;
     private View root;
     private SessionDataFile sessionDataFile;
+    private ReportsDataFile reportsDataFile;
+    private TrackDataFile trackDataFile;
 
     private boolean symptomatic;
 
@@ -51,6 +56,8 @@ public class ReportFragment extends Fragment {
     public void onStart() {
         super.onStart();
         this.sessionDataFile = mainActivity.getFileManager().getSessionDataFile();
+        this.reportsDataFile = mainActivity.getFileManager().getReportsDataFile();
+        this.trackDataFile = mainActivity.getFileManager().getTrackDataFile();
         this.symptomatic = sessionDataFile.isSymptomatic();
     }
 
@@ -74,7 +81,8 @@ public class ReportFragment extends Fragment {
         } else {
             button.setText(R.string.better_button);
             button.setTextColor(R.color.green);
-            mainActivity.getClient().send(new PacketOutInfection(sessionDataFile.getUserId(), mainActivity.getFileManager().getTrackDataFile().getTrack()));
+            PacketOutInfection packet = new PacketOutInfection(sessionDataFile.getUserId(), trackDataFile.getTrack(), reportsDataFile.getLastReports(MAX_INCUBATION));
+            mainActivity.getClient().send(packet);
         }
     }
 

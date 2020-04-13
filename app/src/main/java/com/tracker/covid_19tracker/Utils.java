@@ -53,6 +53,16 @@ public class Utils {
         return new Infection(locationEntry, isActive);
     }
 
+    public static JSONArray reportsToArray(TreeSet<Infection> infections){
+        JSONArray jsonArray = new JSONArray();
+
+        for (Infection infection : infections){
+            jsonArray.put(reportToObject(infection));
+        }
+
+        return jsonArray;
+    }
+
     public static JSONObject reportToObject(Infection infection){
         JSONObject jsonObject = new JSONObject();
 

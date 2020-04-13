@@ -11,10 +11,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
 
 public class CachedPacketsFile extends AbstractFile {
 
@@ -45,6 +43,12 @@ public class CachedPacketsFile extends AbstractFile {
 
     public void cache(PacketOut packetOut){
         cached.add(packetOut);
+
+        try {
+            ((JSONArray) data.get("packets")).put(new String(packetOut.getData()));
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

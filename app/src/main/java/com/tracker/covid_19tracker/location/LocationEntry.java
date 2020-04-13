@@ -35,6 +35,14 @@ public class LocationEntry implements Comparable<LocationEntry> {
         return new LocationEntry(this.latitude - locationEntry.latitude, this.longitude - locationEntry.longitude, this.altitude + locationEntry.altitude, -1);
     }
 
+    public LocationEntry multiply(double scalar){
+        return new LocationEntry(scalar * latitude, scalar * longitude, scalar * altitude, -1);
+    }
+
+    public LocationEntry divide(double divisor){
+        return multiply(1 / divisor);
+    }
+
     // Using Euclidean geometry is fine as we'll be dealing with small distances. Altitude is ignored for now.
     public double distanceSquared(LocationEntry locationEntry){
         return Math.pow(DEGREES_TO_METERS, 2) * Math.pow(this.latitude - locationEntry.latitude, 2) + Math.pow((this.longitude - locationEntry.longitude) * Math.cos(Math.toRadians(latitude)), 2);

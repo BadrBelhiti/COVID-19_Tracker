@@ -66,10 +66,10 @@ public class SessionDataFile extends AbstractFile {
         try {
             this.data = new JSONObject(raw);
             this.userId = UUID.fromString(data.getString("uuid"));
-            this.first = data.getInt("first");
-            this.last = data.getInt("last");
+            this.first = data.getLong("first");
+            this.last = data.getLong("last");
             this.symptomatic = data.getBoolean("symptomatic");
-            this.lastReport = data.getInt("last_report");
+            this.lastReport = data.getLong("last_report");
         } catch (JSONException e){
             e.printStackTrace();
             return false;
@@ -94,6 +94,11 @@ public class SessionDataFile extends AbstractFile {
 
     public void setFirst(long first) {
         this.first = first;
+        try {
+            data.put("first", first);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
     }
 
     public long getLast() {
@@ -102,6 +107,11 @@ public class SessionDataFile extends AbstractFile {
 
     public void setLast(long last) {
         this.last = last;
+        try {
+            data.put("last", last);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
     }
 
     public boolean isSymptomatic() {
