@@ -26,7 +26,7 @@ and reports.
 
 ## The Potential of RIST
 With the data RIST makes available, API's can be developed to build maps of local cases and local epicenters. This will
-promote public awareness, emphasize quarantine, and allow data-driven screening.
+promote public awareness, emphasize quarantine, and allow for data-driven screening.
 
 ## Data Safety and Privacy
 Although RIST continiously tracks your smartphone's location data, your "track" is stored locally on your device until you
