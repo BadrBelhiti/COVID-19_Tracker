@@ -32,18 +32,6 @@ public class TrackDataFile extends AbstractFile {
 
     }
 
-    private void initializeData(){
-        JSONArray locations = new JSONArray();
-
-        try {
-            data.put("location_entries", locations);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        save();
-    }
-
     @Override
     public void onCreate(boolean successful) {
         super.onCreate(successful);
@@ -53,9 +41,13 @@ public class TrackDataFile extends AbstractFile {
             return;
         }
 
-        Log.d("File IO", "Empty track data. Continuing...");
-        initializeData();
-        Log.d("File IO", data.toString());
+        try {
+            data.put("location_entries", new JSONArray());
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        save();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -67,9 +59,6 @@ public class TrackDataFile extends AbstractFile {
             return false;
         }
 
-        Log.d("File IO", file.toPath().toString());
-        Log.d("File IO", raw);
-
         try {
             this.data = new JSONObject(raw);
             this.track = Utils.getTrack(raw);
@@ -77,9 +66,6 @@ public class TrackDataFile extends AbstractFile {
             e.printStackTrace();
             return false;
         }
-
-        Log.d("Debugging", data.toString());
-        Log.d("Debugging", track.toString());
 
         return true;
     }

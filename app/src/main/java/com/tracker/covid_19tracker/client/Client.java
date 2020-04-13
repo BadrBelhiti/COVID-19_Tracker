@@ -7,7 +7,8 @@ import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.R;
 import com.tracker.covid_19tracker.client.packets.out.PacketOut;
-import org.json.JSONException;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
+import com.tracker.covid_19tracker.files.CachedPacketsFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public abstract class Client implements Runnable {
     private BufferedReader bufferedReader;
     private OutputStream outputStream;
     private volatile Queue<PacketOut> outgoing;
+    private CachedPacketsFile cachedPacketsFile;
     private volatile boolean listening;
     private boolean connected = false;
 
@@ -43,6 +45,7 @@ public abstract class Client implements Runnable {
         this.packetHandler = new PacketHandler(mainActivity);
         this.handler = new Handler(mainActivity.getMainLooper());
         this.outgoing = new LinkedList<>();
+        this.cachedPacketsFile = mainActivity.getFileManager().getCachedPacketsFile();
         this.listening = true;
 
         this.HOST = mainActivity.getString(R.string.ip_address);
@@ -56,7 +59,77 @@ public abstract class Client implements Runnable {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void run() {
+        tryConnecting();
 
+        if (connected){
+            trySendingCache();
+        }
+
+        while (listening){
+
+            // Do not waste time with a closed connection
+            if (!connected){
+
+                tryConnecting();
+
+                if (!connected) {
+                    try {
+                        Thread.sleep(5 * 60 * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    trySendingCache();
+                }
+
+            } else {
+
+                // Send any pending packets
+                if (!outgoing.isEmpty()) {
+                    PacketOut packet = outgoing.poll();
+                    if (packet != null) {
+                        Log.d("Debugging", packet.toString());
+                        try {
+                            Log.d("Debugging", "Sending packet: " + new String(packet.getData()));
+                            outputStream.write(packet.getData());
+                            outputStream.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("Client Error", "Error sending packet");
+                            cachedPacketsFile.cache(packet);
+                        }
+                    }
+                }
+
+                // Listen for response
+                String msg = null;
+
+                try {
+                    if (bufferedReader.ready()) {
+                        msg = bufferedReader.readLine();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (msg == null) {
+                    continue;
+                }
+
+                Log.d("Debugging", msg);
+
+                final String finalMsg = msg;
+                Log.d("Debugging", "Received packet: " + msg);
+                handler.post(() -> packetHandler.handlePacket(finalMsg));
+            }
+        }
+
+        this.connected = false;
+        shutdown();
+    }
+
+    private void tryConnecting(){
+        Log.d("Debugging", "Connecting...");
         this.socket = new Socket();
 
         try {
@@ -71,53 +144,25 @@ public abstract class Client implements Runnable {
 
         onConnectionAttempt(connected);
 
-        while (listening && connected){
-
-            // Send any pending packets
-            if (!outgoing.isEmpty()){
-                PacketOut packet = outgoing.poll();
-                if (packet != null) {
-                    Log.d("Debugging", packet.toString());
-                    try {
-                        Log.d("Debugging", "Sending packet: " + new String(packet.getData()));
-                        outputStream.write(packet.getData());
-                        outputStream.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e("Client Error", "Error sending packet");
-                    }
-                }
-            }
-
-            // Listen for response
-            String msg = null;
-
-            try {
-                if (bufferedReader.ready()) {
-                    msg = bufferedReader.readLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (msg == null){
-                continue;
-            }
-
-            Log.d("Debugging", msg);
-
-            final String finalMsg = msg;
-            handler.post(() -> packetHandler.handlePacket(finalMsg));
+        if (connected) {
+            PacketOut packet = new PacketOutLogin(mainActivity.getFileManager().getSessionDataFile().getUserId());
+            send(packet);
         }
+    }
 
-        this.connected = false;
-        shutdown();
+    private void trySendingCache(){
+        outgoing.addAll(cachedPacketsFile.getCached());
+        cachedPacketsFile.getCached().clear();
     }
 
     public abstract void onConnectionAttempt(boolean connected);
 
     public void send(PacketOut packetOut){
-        outgoing.add(packetOut);
+        if (connected) {
+            outgoing.add(packetOut);
+        } else {
+            cachedPacketsFile.cache(packetOut);
+        }
     }
 
     private void closeOnError(final String errMsg){
@@ -134,6 +179,8 @@ public abstract class Client implements Runnable {
     }
 
     public void shutdown(){
+        boolean successful = true;
+
         try {
             if (socket != null) {
                 socket.close();
@@ -148,14 +195,21 @@ public abstract class Client implements Runnable {
             }
         } catch (IOException e){
             e.printStackTrace();
+            successful = false;
         }
 
         try {
             connectionThread.join();
         } catch (InterruptedException e){
             e.printStackTrace();
+            successful = false;
         }
+
+        boolean finalSuccessful = successful;
+        handler.post(() -> onShutdown(finalSuccessful));
     }
+
+    public abstract void onShutdown(boolean successful);
 
     public boolean isConnected() {
         return connected;

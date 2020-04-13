@@ -4,20 +4,42 @@ import android.os.Build;
 import android.util.Log;
 import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.Utils;
+import com.tracker.covid_19tracker.client.packets.Packet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-public abstract class PacketOut {
+public class PacketOut extends Packet {
 
     protected JSONObject payload;
     private UUID uuid;
     protected int id;
     protected byte[] data;
 
+    public PacketOut(byte[] data){
+        super(new String(data));
+        this.data = data;
+    }
+
+    public PacketOut(String raw) throws JSONException {
+        this(new JSONObject(raw));
+    }
+
+    public PacketOut(JSONObject data){
+        super(data);
+        try {
+            this.payload = data.getJSONObject("data");
+            this.uuid = UUID.fromString(data.getString("uuid"));
+            this.id = data.getInt("id");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
     protected PacketOut(int id, UUID uuid){
+        super(new JSONObject());
         this.id = id;
         this.uuid = uuid;
     }
@@ -35,7 +57,6 @@ public abstract class PacketOut {
             }
             String packet = jsonObject.toString();
             this.data = (Utils.zeroPad(packet.length() + "", 8) + packet).getBytes(StandardCharsets.UTF_8);
-            Log.d("Debugging", new String(data));
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building packet");

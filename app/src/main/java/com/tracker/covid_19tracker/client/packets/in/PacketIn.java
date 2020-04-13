@@ -1,15 +1,18 @@
 package com.tracker.covid_19tracker.client.packets.in;
 
-public abstract class PacketIn {
+import com.tracker.covid_19tracker.MainActivity;
+import com.tracker.covid_19tracker.client.packets.Packet;
 
-    protected String raw;
+public abstract class PacketIn extends Packet {
 
-    protected PacketIn(String raw){
-        this.raw = raw;
+    public PacketIn(String raw){
+        super(raw);
     }
 
     public int size(){
-        return raw.length();
+        return data.length();
     }
+
+    public abstract void handle(MainActivity mainActivity);
 
 }

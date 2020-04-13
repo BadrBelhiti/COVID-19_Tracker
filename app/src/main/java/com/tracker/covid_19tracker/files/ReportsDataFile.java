@@ -12,14 +12,16 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ReportsDataFile extends AbstractFile {
 
-    private List<Infection> infections;
+    private Set<Infection> infections;
 
     protected ReportsDataFile(File dir, FileManager fileManager) {
         super("reports.json", dir, fileManager);
-        this.infections = new ArrayList<>();
+        this.infections = new TreeSet<>();
     }
 
     @Override
@@ -35,7 +37,6 @@ public class ReportsDataFile extends AbstractFile {
             this.data.put("reports", new JSONArray());
         } catch (JSONException e) {
             e.printStackTrace();
-            return;
         }
 
         save();
@@ -53,16 +54,12 @@ public class ReportsDataFile extends AbstractFile {
                 e.printStackTrace();
             }
         }
-
-        Log.d("Debugging", "--->" + infections.toString());
-        Log.d("Debugging", "-->" + data);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public boolean load() {
         String raw = Utils.fromStream(inputStream);
-        Log.d("Debugging", raw == null ? "Null" : raw);
 
         if (raw == null){
             return false;
@@ -84,12 +81,26 @@ public class ReportsDataFile extends AbstractFile {
             return false;
         }
 
-        Log.d("Debugging", "--->" + infections.toString());
-
         return true;
     }
 
-    public List<Infection> getInfections() {
+    public TreeSet<Infection> getLastReports(long timeMillis){
+        long currentTime = System.currentTimeMillis();
+        TreeSet<Infection> res = new TreeSet<>();
+
+        // 'infections' is already sorted by time
+        for (Infection infection : infections){
+            if ((currentTime - infection.getContact().getTimestamp()) <= timeMillis){
+                res.add(infection);
+            } else {
+                break;
+            }
+        }
+
+        return res;
+    }
+
+    public Set<Infection> getInfections() {
         return infections;
     }
 }
