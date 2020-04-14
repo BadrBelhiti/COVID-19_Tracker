@@ -91,6 +91,7 @@ public class LocationTracker implements LocationListener {
             LocationEntry snapshot = new LocationEntry(0, 0, 0, -1);
 
             for (LocationEntry locationEntry : track.getSet()){
+                Log.d("Debugging", locationEntry.toString());
                 first = Math.min(locationEntry.getTimestamp(), first);
                 last = Math.max(locationEntry.getTimestamp(), last);
 
