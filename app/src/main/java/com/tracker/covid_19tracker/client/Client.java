@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.UUID;
 
 public abstract class Client implements Runnable {
 
@@ -36,6 +37,7 @@ public abstract class Client implements Runnable {
     private OutputStream outputStream;
     private volatile Queue<PacketOut> outgoing;
     private CachedPacketsFile cachedPacketsFile;
+    private UUID sessionID;
     private volatile boolean listening;
     private boolean connected = false;
 
@@ -213,5 +215,13 @@ public abstract class Client implements Runnable {
 
     public boolean isConnected() {
         return connected;
+    }
+
+    public UUID getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(UUID sessionID) {
+        this.sessionID = sessionID;
     }
 }

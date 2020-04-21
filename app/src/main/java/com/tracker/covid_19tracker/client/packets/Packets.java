@@ -3,6 +3,7 @@ package com.tracker.covid_19tracker.client.packets;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.client.packets.in.PacketInInfection;
+import com.tracker.covid_19tracker.client.packets.in.PacketInLogin;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutBetter;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
@@ -15,7 +16,7 @@ public enum Packets {
 
     OUT_LOGIN(PacketOutLogin.class, 0), OUT_SNAPSHOT(PacketOutSnapshot.class, 1),
     OUT_INFECTION(PacketOutInfection.class, 2), IN_INFECTION(PacketInInfection.class, 3),
-    OUT_BETTER(PacketOutBetter.class, 4);
+    OUT_BETTER(PacketOutBetter.class, 4), IN_LOGIN(PacketInLogin.class, 5);
 
     Class<? extends Packet> packetClass;
     int id;
