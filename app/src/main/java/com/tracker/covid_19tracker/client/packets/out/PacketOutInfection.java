@@ -15,8 +15,8 @@ import java.util.UUID;
 public class PacketOutInfection extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutInfection(UUID uuid, Track track, TreeSet<Infection> reports) {
-        super(2, uuid);
+    public PacketOutInfection(UUID uuid, UUID sessionID, Track track, TreeSet<Infection> reports) {
+        super(2, uuid, sessionID);
 
         JSONObject payload = new JSONObject();
 

@@ -13,8 +13,8 @@ import java.util.UUID;
 public class PacketOutSnapshot extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutSnapshot(UUID uuid, LocationEntry locationEntry, long first, long last) {
-        super(1, uuid);
+    public PacketOutSnapshot(UUID uuid, UUID sessionID, LocationEntry locationEntry, long first, long last) {
+        super(1, uuid, sessionID);
 
         JSONObject payload = new JSONObject();
 

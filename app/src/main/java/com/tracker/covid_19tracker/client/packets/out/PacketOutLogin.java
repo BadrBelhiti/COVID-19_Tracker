@@ -8,8 +8,8 @@ import java.util.UUID;
 public class PacketOutLogin extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutLogin(UUID uuid) {
-        super(0, uuid);
+    public PacketOutLogin(UUID uuid, UUID sessionID) {
+        super(0, uuid, sessionID);
         packData(null);
     }
 }
