@@ -15,6 +15,7 @@ public class PacketOut extends Packet {
 
     protected JSONObject payload;
     private UUID uuid;
+    private UUID sessionID;
     protected int id;
     protected byte[] data;
 
@@ -32,13 +33,14 @@ public class PacketOut extends Packet {
         try {
             this.payload = data.getJSONObject("data");
             this.uuid = UUID.fromString(data.getString("uuid"));
+            this.sessionID = UUID.fromString(data.getString("session_id"));
             this.id = data.getInt("id");
         } catch (JSONException e){
             e.printStackTrace();
         }
     }
 
-    protected PacketOut(int id, UUID uuid){
+    protected PacketOut(int id, UUID uuid, UUID sessionID){
         super(new JSONObject());
         this.id = id;
         this.uuid = uuid;

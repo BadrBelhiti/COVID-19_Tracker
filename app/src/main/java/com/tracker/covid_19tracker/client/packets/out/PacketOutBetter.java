@@ -9,8 +9,8 @@ public class PacketOutBetter extends PacketOut {
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutBetter(UUID uuid) {
-        super(4, uuid);
+    public PacketOutBetter(UUID uuid, UUID sessionID) {
+        super(4, uuid, sessionID);
         packData(null);
     }
 }

@@ -104,7 +104,7 @@ public class LocationTracker implements LocationListener {
             sessionDataFile.setFirst(first);
             sessionDataFile.setLast(last);
 
-            PacketOutSnapshot packet = new PacketOutSnapshot(sessionDataFile.getUserId(), snapshot, first, last);
+            PacketOutSnapshot packet = new PacketOutSnapshot(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID(), snapshot, first, last);
             mainActivity.getClient().send(packet);
         }
     }
