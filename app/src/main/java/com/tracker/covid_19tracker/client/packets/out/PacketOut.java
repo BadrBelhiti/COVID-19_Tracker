@@ -54,6 +54,7 @@ public class PacketOut extends Packet {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", id);
             jsonObject.put("uuid", uuid.toString());
+            jsonObject.put("session_id", sessionID.toString());
             if (payload != null){
                 jsonObject.put("data", payload);
             }
