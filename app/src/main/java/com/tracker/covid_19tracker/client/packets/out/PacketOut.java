@@ -33,8 +33,12 @@ public class PacketOut extends Packet {
         try {
             this.payload = data.getJSONObject("data");
             this.uuid = UUID.fromString(data.getString("uuid"));
-            this.sessionID = UUID.fromString(data.getString("session_id"));
             this.id = data.getInt("id");
+
+            if (!(this instanceof PacketOutLogin)){
+                this.sessionID = UUID.fromString(data.getString("session_id"));
+            }
+
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -44,6 +48,7 @@ public class PacketOut extends Packet {
         super(new JSONObject());
         this.id = id;
         this.uuid = uuid;
+        this.sessionID = sessionID;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -54,17 +59,25 @@ public class PacketOut extends Packet {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", id);
             jsonObject.put("uuid", uuid.toString());
-            jsonObject.put("session_id", sessionID.toString());
             if (payload != null){
                 jsonObject.put("data", payload);
             }
-            String packet = jsonObject.toString();
-            this.data = (Utils.zeroPad(packet.length() + "", 8) + packet).getBytes(StandardCharsets.UTF_8);
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building packet");
         }
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void finalizeToSend(UUID sessionID){
+        try {
+            payload.put("session_id", sessionID.toString());
+            String packet = payload.toString();
+            this.data = (Utils.zeroPad(packet.length() + "", 8) + packet).getBytes(StandardCharsets.UTF_8);
+        } catch (JSONException e){
+            e.printStackTrace();
+            Log.e("Client Error", "Error finalizing packet");
+        }
     }
 
     public int size(){
@@ -77,6 +90,6 @@ public class PacketOut extends Packet {
 
     @Override
     public String toString() {
-        return new String(data);
+        return payload.toString();
     }
 }

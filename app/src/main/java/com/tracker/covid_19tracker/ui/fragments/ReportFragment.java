@@ -27,6 +27,7 @@ public class ReportFragment extends Fragment {
     private SessionDataFile sessionDataFile;
     private ReportsDataFile reportsDataFile;
     private TrackDataFile trackDataFile;
+    private Button button;
 
     private boolean symptomatic;
 
@@ -39,9 +40,9 @@ public class ReportFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button report = mainActivity.findViewById(R.id.report);
+        this.button = mainActivity.findViewById(R.id.report);
 
-        report.setOnClickListener((e) -> {
+        button.setOnClickListener((e) -> {
             Log.d("Debugging", "Report clicked");
             setSymptomatic(!symptomatic);
         });
@@ -72,13 +73,14 @@ public class ReportFragment extends Fragment {
         this.symptomatic = symptomatic;
         mainActivity.getFileManager().getSessionDataFile().setSymptomatic(symptomatic);
 
-        Button button = mainActivity.findViewById(R.id.report);
-
         if (!symptomatic){
             button.setText(R.string.report_button);
             button.setTextColor(R.color.colorPrimaryDark);
             mainActivity.getClient().send(new PacketOutBetter(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID()));
         } else {
+
+            // TODO: Show symptom selector
+
             button.setText(R.string.better_button);
             button.setTextColor(R.color.green);
             PacketOutInfection packet = new PacketOutInfection(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID(), trackDataFile.getTrack(), reportsDataFile.getLastReports(MAX_INCUBATION));

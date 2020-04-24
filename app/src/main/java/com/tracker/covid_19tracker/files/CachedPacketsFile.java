@@ -45,7 +45,7 @@ public class CachedPacketsFile extends AbstractFile {
         cached.add(packetOut);
 
         try {
-            ((JSONArray) data.get("packets")).put(new String(packetOut.getData()));
+            ((JSONArray) data.get("packets")).put(packetOut.toString());
         } catch (JSONException e){
             e.printStackTrace();
         }
