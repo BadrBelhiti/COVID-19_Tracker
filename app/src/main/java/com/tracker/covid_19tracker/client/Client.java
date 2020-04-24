@@ -91,6 +91,7 @@ public abstract class Client implements Runnable {
                     PacketOut packet = outgoing.poll();
                     if (packet != null) {
                         Log.d("Debugging", packet.toString());
+                        packet.finalizeToSend(sessionID);
                         try {
                             Log.d("Debugging", "Sending packet: " + new String(packet.getData()));
                             outputStream.write(packet.getData());
