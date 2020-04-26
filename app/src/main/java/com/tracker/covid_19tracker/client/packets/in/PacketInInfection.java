@@ -38,7 +38,9 @@ public class PacketInInfection extends PacketIn {
             Log.d("Debugging", "No paths crossed with infected user!");
         } else {
             Log.d("Debugging", "Close Contact Reported: " + contact.toString());
-            mainActivity.getFileManager().getReportsDataFile().add(new Infection(contact, true), false);
+
+            // TODO: Implement symptoms
+            mainActivity.getFileManager().getReportsDataFile().add(new Infection(contact, null, true), false);
         }
     }
 

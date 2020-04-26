@@ -50,7 +50,8 @@ public class Utils {
             e.printStackTrace();
         }
 
-        return new Infection(locationEntry, isActive);
+        // TODO: Implement symptoms
+        return new Infection(locationEntry, null, isActive);
     }
 
     public static JSONArray reportsToArray(TreeSet<Infection> infections){
