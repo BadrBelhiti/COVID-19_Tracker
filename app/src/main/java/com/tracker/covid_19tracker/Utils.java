@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.location.LocationEntry;
 import com.tracker.covid_19tracker.location.Track;
 import com.tracker.covid_19tracker.ui.Infection;
+import com.tracker.covid_19tracker.ui.Symptom;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,16 +43,17 @@ public class Utils {
     public static Infection getReport(JSONObject report){
         LocationEntry locationEntry = null;
         boolean isActive = false;
+        int symptoms = 0;
 
         try {
             locationEntry = arrayToEntry(report.getJSONArray("location"));
             isActive = report.getBoolean("active");
+            symptoms = report.getInt("symptoms");
         } catch (JSONException e){
             e.printStackTrace();
         }
 
-        // TODO: Implement symptoms
-        return new Infection(locationEntry, null, isActive);
+        return new Infection(locationEntry, Symptom.getSymptoms(symptoms), isActive);
     }
 
     public static JSONArray reportsToArray(TreeSet<Infection> infections){
