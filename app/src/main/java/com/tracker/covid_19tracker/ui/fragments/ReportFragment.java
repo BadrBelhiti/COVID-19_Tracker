@@ -79,7 +79,7 @@ public class ReportFragment extends Fragment {
         if (!symptomatic){
             button.setText(R.string.report_button);
             button.setTextColor(R.color.colorPrimaryDark);
-            mainActivity.getClient().send(new PacketOutBetter(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID()));
+            mainActivity.getClient().send(new PacketOutBetter());
         } else {
 
             // TODO: Show symptom selector
@@ -95,7 +95,7 @@ public class ReportFragment extends Fragment {
 
             button.setText(R.string.better_button);
             button.setTextColor(R.color.green);
-            PacketOutInfection packet = new PacketOutInfection(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID(), trackDataFile.getTrack(), Symptom.getSymptoms(symptoms), reportsDataFile.getLastReports(MAX_INCUBATION));
+            PacketOutInfection packet = new PacketOutInfection(trackDataFile.getTrack(), Symptom.getSymptoms(symptoms), reportsDataFile.getLastReports(MAX_INCUBATION));
             mainActivity.getClient().send(packet);
         }
     }

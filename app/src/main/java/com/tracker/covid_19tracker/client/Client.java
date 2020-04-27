@@ -148,7 +148,7 @@ public abstract class Client implements Runnable {
         onConnectionAttempt(connected);
 
         if (connected) {
-            PacketOut packet = new PacketOutLogin(mainActivity.getFileManager().getSessionDataFile().getUserId(), sessionID);
+            PacketOut packet = new PacketOutLogin();
             send(packet);
         }
     }

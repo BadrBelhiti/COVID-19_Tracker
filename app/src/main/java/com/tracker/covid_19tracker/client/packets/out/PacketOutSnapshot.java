@@ -8,13 +8,11 @@ import com.tracker.covid_19tracker.location.LocationEntry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.UUID;
-
 public class PacketOutSnapshot extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutSnapshot(UUID uuid, UUID sessionID, LocationEntry locationEntry, long first, long last) {
-        super(1, uuid, sessionID);
+    public PacketOutSnapshot(LocationEntry locationEntry, long first, long last) {
+        super(1);
 
         JSONObject payload = new JSONObject();
 

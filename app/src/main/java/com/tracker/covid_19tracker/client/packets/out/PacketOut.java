@@ -14,8 +14,6 @@ import java.util.UUID;
 public class PacketOut extends Packet {
 
     protected JSONObject payload;
-    private UUID uuid;
-    private UUID sessionID;
     protected int id;
     protected byte[] data;
 
@@ -32,34 +30,26 @@ public class PacketOut extends Packet {
         super(data);
         try {
             this.payload = data.getJSONObject("data");
-            this.uuid = UUID.fromString(data.getString("uuid"));
             this.id = data.getInt("id");
-
-            if (!(this instanceof PacketOutLogin)){
-                this.sessionID = UUID.fromString(data.getString("session_id"));
-            }
-
         } catch (JSONException e){
             e.printStackTrace();
         }
     }
 
-    protected PacketOut(int id, UUID uuid, UUID sessionID){
+    protected PacketOut(int id){
         super(new JSONObject());
         this.id = id;
-        this.uuid = uuid;
-        this.sessionID = sessionID;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected void packData(JSONObject payload){
-        this.payload = payload;
-
         try {
             JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", id);
             if (payload != null){
                 jsonObject.put("data", payload);
             }
+            this.payload = jsonObject;
         } catch (JSONException e){
             e.printStackTrace();
             Log.e("Client Error", "Error building packet");
@@ -69,7 +59,6 @@ public class PacketOut extends Packet {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void finalizeToSend(UUID userId, UUID sessionID){
         try {
-            payload.put("id", id);
             payload.put("uuid", userId.toString());
             if (!(this instanceof PacketOutLogin)){
                 payload.put("session_id", sessionID.toString());
