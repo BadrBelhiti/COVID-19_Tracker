@@ -27,11 +27,7 @@ public class Infection implements Comparable<Infection> {
     }
 
     public int getSymptomsAsInt(){
-        int res = 0;
-        for (Symptom symptom : symptoms){
-            res |= (1 << symptom.pos);
-        }
-        return res;
+        return Symptom.getSymptomsAsInt(symptoms);
     }
 
     public LocationEntry getContact() {

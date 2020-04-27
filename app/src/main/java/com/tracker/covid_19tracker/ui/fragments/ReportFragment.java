@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,8 @@ import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
 import com.tracker.covid_19tracker.files.ReportsDataFile;
 import com.tracker.covid_19tracker.files.SessionDataFile;
 import com.tracker.covid_19tracker.files.TrackDataFile;
+import com.tracker.covid_19tracker.ui.Infection;
+import com.tracker.covid_19tracker.ui.Symptom;
 
 
 public class ReportFragment extends Fragment {
@@ -81,9 +84,18 @@ public class ReportFragment extends Fragment {
 
             // TODO: Show symptom selector
 
+            int symptoms = 0;
+
+            for (Symptom symptom : Symptom.values()){
+                CheckBox checkBox = mainActivity.findViewById(symptom.getId());
+                if (checkBox.isChecked()){
+                    symptoms |= (1 << symptom.getPos());
+                }
+            }
+
             button.setText(R.string.better_button);
             button.setTextColor(R.color.green);
-            PacketOutInfection packet = new PacketOutInfection(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID(), trackDataFile.getTrack(), reportsDataFile.getLastReports(MAX_INCUBATION));
+            PacketOutInfection packet = new PacketOutInfection(sessionDataFile.getUserId(), mainActivity.getClient().getSessionID(), trackDataFile.getTrack(), Symptom.getSymptoms(symptoms), reportsDataFile.getLastReports(MAX_INCUBATION));
             mainActivity.getClient().send(packet);
         }
     }

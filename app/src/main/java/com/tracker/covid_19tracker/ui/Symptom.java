@@ -1,24 +1,26 @@
 package com.tracker.covid_19tracker.ui;
 
+import com.tracker.covid_19tracker.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public enum Symptom {
 
-    COUGH("Frequent Coughing", "cough", 0),
-    SNEEZE("Frequent Sneezing", "sneeze", 1),
-    FEVER("Fever", "fever", 2),
-    BREATH("Shortness of Breath", "breathe", 3),
-    NOSE("Runny Nose", "nose", 4),
-    ACHES("Body Aches", "aches", 5),
-    FATIGUE("Fatigue", "fatigue", 6),
-    THROAT("Sore Throat", "throat", 7);
+    COUGH("Frequent Coughing", R.id.cough, 0),
+    SNEEZE("Frequent Sneezing", R.id.sneeze, 1),
+    FEVER("Fever", R.id.fever, 2),
+    BREATH("Shortness of Breath", R.id.breath, 3),
+    NOSE("Runny Nose", R.id.nose, 4),
+    ACHES("Body Aches", R.id.aches, 5),
+    FATIGUE("Fatigue", R.id.fatigue, 6),
+    THROAT("Sore Throat", R.id.throat, 7);
 
     String name;
-    String id;
+    int id;
     int pos;
 
-    Symptom(String name, String id, int pos){
+    Symptom(String name, int id, int pos){
         this.name = name;
         this.id = id;
         this.pos = pos;
@@ -28,7 +30,7 @@ public enum Symptom {
         return name;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -46,6 +48,14 @@ public enum Symptom {
         }
 
         return symptoms;
+    }
+
+    public static int getSymptomsAsInt(List<Symptom> symptoms){
+        int res = 0;
+        for (Symptom symptom : symptoms){
+            res |= (1 << symptom.pos);
+        }
+        return res;
     }
 
 }

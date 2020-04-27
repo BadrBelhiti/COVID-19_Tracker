@@ -57,8 +57,6 @@ public class PacketOut extends Packet {
 
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", id);
-            jsonObject.put("uuid", uuid.toString());
             if (payload != null){
                 jsonObject.put("data", payload);
             }
@@ -69,9 +67,13 @@ public class PacketOut extends Packet {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void finalizeToSend(UUID sessionID){
+    public void finalizeToSend(UUID userId, UUID sessionID){
         try {
-            payload.put("session_id", sessionID.toString());
+            payload.put("id", id);
+            payload.put("uuid", userId.toString());
+            if (!(this instanceof PacketOutLogin)){
+                payload.put("session_id", sessionID.toString());
+            }
             String packet = payload.toString();
             this.data = (Utils.zeroPad(packet.length() + "", 8) + packet).getBytes(StandardCharsets.UTF_8);
         } catch (JSONException e){
