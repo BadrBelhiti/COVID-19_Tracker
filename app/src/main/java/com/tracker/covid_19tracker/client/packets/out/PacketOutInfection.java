@@ -12,13 +12,12 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.TreeSet;
-import java.util.UUID;
 
 public class PacketOutInfection extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutInfection(UUID uuid, UUID sessionID, Track track, List<Symptom> symptoms, TreeSet<Infection> reports) {
-        super(2, uuid, sessionID);
+    public PacketOutInfection(Track track, List<Symptom> symptoms, TreeSet<Infection> reports) {
+        super(2);
 
         JSONObject payload = new JSONObject();
 
