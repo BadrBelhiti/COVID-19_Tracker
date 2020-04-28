@@ -8,7 +8,7 @@ public class PacketOutBetter extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public PacketOutBetter() {
-        super(4);
+        super(7);
         packData(null);
     }
 }

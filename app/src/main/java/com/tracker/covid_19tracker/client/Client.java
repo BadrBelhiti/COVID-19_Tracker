@@ -7,8 +7,11 @@ import androidx.annotation.RequiresApi;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.R;
 import com.tracker.covid_19tracker.client.packets.out.PacketOut;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutHandshake;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutKeepAlive;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
 import com.tracker.covid_19tracker.files.CachedPacketsFile;
+import com.tracker.covid_19tracker.ui.Symptom;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +27,7 @@ import java.util.UUID;
 public abstract class Client implements Runnable {
 
     private static final int TIMEOUT = 5 * 1000;
+    private static final int KEEP_ALIVE = 60 * 1000;
 
     private final String HOST;
     private final int PORT;
@@ -40,6 +44,7 @@ public abstract class Client implements Runnable {
     private UUID sessionID;
     private volatile boolean listening;
     private boolean connected = false;
+    private long lastSend = 0;
 
     public Client(MainActivity mainActivity){
         this.mainActivity = mainActivity;
@@ -96,12 +101,17 @@ public abstract class Client implements Runnable {
                             Log.d("Debugging", "Sending packet: " + new String(packet.getData()));
                             outputStream.write(packet.getData());
                             outputStream.flush();
+                            this.lastSend = System.currentTimeMillis();
                         } catch (IOException e) {
                             e.printStackTrace();
                             Log.e("Client Error", "Error sending packet");
                             cachedPacketsFile.cache(packet);
                         }
                     }
+                }
+
+                if (System.currentTimeMillis() - lastSend >= KEEP_ALIVE){
+                    send(new PacketOutKeepAlive());
                 }
 
                 // Listen for response
@@ -148,7 +158,7 @@ public abstract class Client implements Runnable {
         onConnectionAttempt(connected);
 
         if (connected) {
-            PacketOut packet = new PacketOutLogin();
+            PacketOutHandshake packet = new PacketOutHandshake();
             send(packet);
         }
     }

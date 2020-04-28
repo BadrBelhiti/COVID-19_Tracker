@@ -13,11 +13,11 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.TreeSet;
 
-public class PacketOutInfection extends PacketOut {
+public class PacketOutReport extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public PacketOutInfection(Track track, List<Symptom> symptoms, TreeSet<Infection> reports) {
-        super(2);
+    public PacketOutReport(Track track, List<Symptom> symptoms, TreeSet<Infection> reports) {
+        super(5);
 
         JSONObject payload = new JSONObject();
 
