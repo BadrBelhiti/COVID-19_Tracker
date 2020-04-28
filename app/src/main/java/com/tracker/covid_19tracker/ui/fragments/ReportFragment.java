@@ -13,11 +13,10 @@ import androidx.fragment.app.Fragment;
 import com.tracker.covid_19tracker.MainActivity;
 import com.tracker.covid_19tracker.R;
 import com.tracker.covid_19tracker.client.packets.out.PacketOutBetter;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
+import com.tracker.covid_19tracker.client.packets.out.PacketOutReport;
 import com.tracker.covid_19tracker.files.ReportsDataFile;
 import com.tracker.covid_19tracker.files.SessionDataFile;
 import com.tracker.covid_19tracker.files.TrackDataFile;
-import com.tracker.covid_19tracker.ui.Infection;
 import com.tracker.covid_19tracker.ui.Symptom;
 
 
@@ -95,7 +94,7 @@ public class ReportFragment extends Fragment {
 
             button.setText(R.string.better_button);
             button.setTextColor(R.color.green);
-            PacketOutInfection packet = new PacketOutInfection(trackDataFile.getTrack(), Symptom.getSymptoms(symptoms), reportsDataFile.getLastReports(MAX_INCUBATION));
+            PacketOutReport packet = new PacketOutReport(trackDataFile.getTrack(), Symptom.getSymptoms(symptoms), reportsDataFile.getLastReports(MAX_INCUBATION));
             mainActivity.getClient().send(packet);
         }
     }

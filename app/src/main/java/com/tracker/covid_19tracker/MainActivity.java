@@ -3,13 +3,11 @@ package com.tracker.covid_19tracker;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
-import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,22 +18,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tracker.covid_19tracker.client.Client;
-import com.tracker.covid_19tracker.client.packets.out.PacketOut;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
 import com.tracker.covid_19tracker.files.FileManager;
-import com.tracker.covid_19tracker.location.LocationEntry;
-import com.tracker.covid_19tracker.location.Track;
-import com.tracker.covid_19tracker.ui.Infection;
 import com.tracker.covid_19tracker.ui.fragments.ContactsFragment;
 import com.tracker.covid_19tracker.ui.fragments.LocalCasesFragment;
 import com.tracker.covid_19tracker.ui.fragments.ReportFragment;
 import com.tracker.covid_19tracker.ui.fragments.VisualTracker;
 import com.tracker.covid_19tracker.location.LocationTracker;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 

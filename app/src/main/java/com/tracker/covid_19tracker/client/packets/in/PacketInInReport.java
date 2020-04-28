@@ -12,13 +12,13 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class PacketInInfection extends PacketIn {
+public class PacketInInReport extends PacketIn {
 
     private UUID uuid;
     private Track track;
     private int symptoms;
 
-    public PacketInInfection(String data){
+    public PacketInInReport(String data){
         super(data);
 
         try {

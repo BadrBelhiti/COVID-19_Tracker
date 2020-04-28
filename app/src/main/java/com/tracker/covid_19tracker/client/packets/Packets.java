@@ -2,21 +2,23 @@ package com.tracker.covid_19tracker.client.packets;
 
 import android.os.Build;
 import androidx.annotation.RequiresApi;
-import com.tracker.covid_19tracker.client.packets.in.PacketInInfection;
-import com.tracker.covid_19tracker.client.packets.in.PacketInLogin;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutBetter;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutInfection;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutLogin;
-import com.tracker.covid_19tracker.client.packets.out.PacketOutSnapshot;
+import com.tracker.covid_19tracker.client.packets.in.PacketInHandshake;
+import com.tracker.covid_19tracker.client.packets.in.PacketInInReport;
+import com.tracker.covid_19tracker.client.packets.out.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public enum Packets {
 
-    OUT_LOGIN(PacketOutLogin.class, 0), OUT_SNAPSHOT(PacketOutSnapshot.class, 1),
-    OUT_INFECTION(PacketOutInfection.class, 2), IN_INFECTION(PacketInInfection.class, 3),
-    OUT_BETTER(PacketOutBetter.class, 4), IN_LOGIN(PacketInLogin.class, 5);
+    OUT_HANDSHAKE(PacketOutHandshake.class, 0),
+    IN_HANDSHAKE(PacketInHandshake.class, 1),
+    OUT_KEEPALIVE(PacketOutKeepAlive.class, 2),
+    OUT_LOGIN(PacketOutLogin.class, 3),
+    OUT_SNAPSHOT(PacketOutSnapshot.class, 4),
+    OUT_INFECTION(PacketOutReport.class, 5),
+    IN_INFECTION(PacketInInReport.class, 6),
+    OUT_BETTER(PacketOutBetter.class, 7);
 
     Class<? extends Packet> packetClass;
     int id;

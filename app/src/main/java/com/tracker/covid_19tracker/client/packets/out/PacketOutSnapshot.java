@@ -12,7 +12,7 @@ public class PacketOutSnapshot extends PacketOut {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public PacketOutSnapshot(LocationEntry locationEntry, long first, long last) {
-        super(1);
+        super(4);
 
         JSONObject payload = new JSONObject();
 
